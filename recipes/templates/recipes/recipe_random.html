@@ -1,0 +1,69 @@
+{% extends "recipes/base.html" %}
+{% block content %}
+
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-body text-center">
+
+            <h2 class="card-title mb-3">🎲 Zufälliges Rezept</h2>
+
+            {% if recipe %}
+                <h5>{{ recipe.title }}</h5>
+
+                {% if recipe.image %}
+                <div class="recipe-image-wrapper text-center mb-4">
+                    <img
+                        src="{{ recipe.image.url }}"
+                        class="img-fluid rounded recipe-image"
+                        alt="{{ recipe.title }}"
+                    >
+                </div>
+                {% endif %}
+
+                {% if recipe.duration_minutes %}
+                    <p><strong>Dauer:</strong> {{ recipe.duration_minutes }} Min</p>
+                {% endif %}
+
+                {% if recipe.labels.all %}
+                    <p>
+                        <strong>Labels:</strong>
+                        {% for label in recipe.labels.all %}
+                            {% if label.label_type == "category" %}
+                                <span class="badge rounded-pill border text-primary">{{ label.name }}</span>
+                            {% elif label.label_type == "event" %}
+                                <span class="badge rounded-pill border text-success">{{ label.name }}</span>
+                            {% else %}
+                                <span class="badge rounded-pill border text-secondary">{{ label.name }}</span>
+                            {% endif %}
+                        {% endfor %}
+                    </p>
+                {% endif %}
+
+                <p>{{ recipe.ingredients }}</p>
+
+                <div class="col-12 d-flex gap-2">
+                    <a href="{% url 'recipes:detail' recipe.slug %}" class="btn btn-primary flex-fill">
+                        <i class="bi bi-folder2-open"> Öffnen</i>
+                    </a>
+
+                    <a href="?{{ request.GET.urlencode }}" class="btn btn-success flex-fill">
+                        <i class="bi bi-repeat"> Nochmal</i>
+                    </a>
+                    <a href="{% url 'recipes:index' %}" class="btn btn-secondary flex-fill">
+                        <i class="bi bi-arrow-left"> Zurück</i>
+                    </a>
+
+                </div>
+            {% else %}
+                <p class="text-muted">Kein passendes Rezept gefunden.</p>
+                <a href="{% url 'recipes:index' %}" class="btn btn-secondary">
+                    Zurück
+                </a>
+            {% endif %}
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

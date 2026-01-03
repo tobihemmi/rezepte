@@ -1,0 +1,46 @@
+{% extends "recipes/base.html" %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="container my-4">
+    <h2 class="mb-4">Neues Rezept hinzufügen</h2>
+
+    <form method="post" enctype="multipart/form-data" class="card p-4">
+        {% csrf_token %}
+
+        {% for field in form %}
+            {% if field.field.widget.input_type == "checkbox" %}
+            <div class="form-text">{{ field.help_text }}</div>
+                <div class="form-check mb-3">
+                    {{ field }}
+                </div>
+
+            {% elif field.name == "labels" %}
+                <div class="mb-3">
+                    <label class="form-label">{{ field.label }}</label>
+                    {% for checkbox in field %}
+                        <div class="form-check">
+                            {{ checkbox.tag }}
+                            <label class="form-check-label">
+                                {{ checkbox.choice_label }}
+                            </label>
+                        </div>
+                    {% endfor %}
+                </div>
+
+            {% else %}
+                <div class="mb-3">
+                    <label class="form-label" for="{{ field.id_for_label }}">
+                        <div class="form-text">{{ field.help_text }}</div>
+                    </label>
+                    {{ field|add_class:"form-control" }}
+                </div>
+            {% endif %}
+        {% endfor %}
+
+        <button type="submit" class="btn btn-primary mt-3">
+            <i class="bi bi-floppy"> Rezept speichern</i>
+        </button>
+    </form>
+</div>
+{% endblock %}

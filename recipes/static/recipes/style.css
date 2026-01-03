@@ -1,0 +1,37 @@
+li a {
+    color: black;
+}
+.recipe-image {
+    max-height: 320px;
+    width: auto;
+    object-fit: contain;
+}
+.recipe-image-wrapper img {
+    max-width: 320px;
+    max-height: 320px;
+    width: auto;
+}
+.fab {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+    z-index: 1050;
+}
+.fab:hover {
+    transform: scale(1.1);
+    transition: transform 0.2s ease;
+}
+.transition-icon {
+    transition: transform 0.3s ease;
+}
+#filterToggleBtn[aria-expanded="true"] .transition-icon {
+    transform: rotate(90deg);
+}

@@ -1,0 +1,147 @@
+{% extends "recipes/base.html" %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="container my-4">
+    <h2 class="mb-4">Rezept bearbeiten: {{ recipe.title }}</h2>
+
+    <form method="post" enctype="multipart/form-data" class="card p-4">
+        {% csrf_token %}
+
+        <!-- Basisinfos & Labels -->
+        {% for field in form %}
+            {% if field.name == "labels" %}
+                <div class="mb-3">
+                    <label class="form-label">{{ field.label }}</label>
+                    {% for checkbox in field %}
+                        <div class="form-check">
+                            {{ checkbox.tag }}
+                            <label class="form-check-label" for="{{ checkbox.id_for_label }}">
+                                {{ checkbox.choice_label }}
+                            </label>
+                        </div>
+                    {% endfor %}
+                </div>
+
+            {% elif field.field.widget.input_type == "checkbox" %}
+                <div class="form-check mb-3">
+                    {{ field|add_class:"form-check-input" }}
+                    <label class="form-check-label" for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                    </label>
+                    {% for error in field.errors %}
+                        <div class="text-danger">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+            {% elif field.name != "ingredients" and field.name != "steps" %}
+                <div class="mb-3">
+                    <label class="form-label" for="{{ field.id_for_label }}">{{ field.help_text }}</label>
+                    {{ field|add_class:"form-control" }}
+                    {% for error in field.errors %}
+                        <div class="text-danger">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endfor %}
+
+
+        <!-- Zutaten -->
+        <div class="mb-4">
+            <label class="form-label">Zutaten</label>
+            <div id="ingredients-list">
+                {% for ingredient in recipe.ingredients.splitlines %}
+                <div class="input-group mb-2 ingredient-item">
+                    <input type="text" name="ingredients" class="form-control" value="{{ ingredient }}">
+                    <button type="button" class="btn btn-danger remove-btn">−</button>
+                </div>
+                {% empty %}
+                <div class="input-group mb-2 ingredient-item">
+                    <input type="text" name="ingredients" class="form-control">
+                    <button type="button" class="btn btn-danger remove-btn">−</button>
+                </div>
+                {% endfor %}
+            </div>
+            <button type="button" id="add-ingredient" class="btn btn-success btn-sm"><i class="bi bi-plus"> Zutat hinzufügen</i></button>
+        </div>
+
+        <!-- Schritte -->
+        <div class="mb-4">
+            <label class="form-label">Anleitung</label>
+            <div id="steps-list">
+                {% for step in recipe.steps.splitlines %}
+                <div class="input-group mb-2 step-item">
+                    <textarea name="steps" class="form-control auto-resize">{{ step }}</textarea>
+                    <button type="button" class="btn btn-danger remove-btn">−</button>
+                </div>
+                {% empty %}
+                <div class="input-group mb-2 step-item">
+                    <textarea name="steps" class="form-control auto-resize"></textarea>
+                    <button type="button" class="btn btn-danger remove-btn">−</button>
+                </div>
+                {% endfor %}
+            </div>
+            <button type="button" id="add-step" class="btn btn-success btn-sm"><i class="bi bi-plus"> Schritt hinzufügen</i></button>
+        </div>
+
+        <!-- Buttons -->
+        <button type="submit" class="btn btn-primary mt-3"><i class="bi bi-floppy"> Änderungen speichern</i></button>
+        <a href="{{ recipe.get_absolute_url }}" class="btn btn-secondary mt-3"><i class="bi bi-x-lg"> Abbrechen</i></a>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Zutaten hinzufügen
+    const ingredientsList = document.getElementById('ingredients-list');
+    document.getElementById('add-ingredient').addEventListener('click', () => {
+        const div = document.createElement('div');
+        div.className = 'input-group mb-2 ingredient-item';
+        div.innerHTML = `
+            <input type="text" name="ingredients" class="form-control">
+            <button type="button" class="btn btn-danger remove-btn">−</button>
+        `;
+        ingredientsList.appendChild(div);
+        attachRemove(div.querySelector('.remove-btn'));
+    });
+
+    // Schritte hinzufügen
+    const stepsList = document.getElementById('steps-list');
+    document.getElementById('add-step').addEventListener('click', () => {
+        const div = document.createElement('div');
+        div.className = 'input-group mb-2 step-item';
+        div.innerHTML = `
+            <input type="text" name="steps" class="form-control">
+            <button type="button" class="btn btn-danger remove-btn">−</button>
+        `;
+        stepsList.appendChild(div);
+        attachRemove(div.querySelector('.remove-btn'));
+    });
+
+    // Entfernen-Buttons
+    function attachRemove(btn) {
+        btn.addEventListener('click', () => {
+            btn.closest('.input-group').remove();
+        });
+    }
+
+    // Vorhandene Buttons aktivieren
+    document.querySelectorAll('.remove-btn').forEach(attachRemove);
+    
+    // Textfelder autoskalieren
+    document.querySelectorAll('.auto-resize').forEach(textarea => {
+    textarea.style.overflow = 'hidden';
+    textarea.style.height = 'auto';
+    textarea.addEventListener('input', e => {
+        textarea.style.height = 'auto';
+        textarea.style.height = textarea.scrollHeight + 'px';
+    });
+    
+    // direkt initial anpassen
+    textarea.style.height = textarea.scrollHeight + 'px';
+});
+
+});
+
+</script>
+{% endblock %}

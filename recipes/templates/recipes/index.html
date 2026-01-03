@@ -1,0 +1,193 @@
+{% extends 'recipes/base.html' %}
+{% block content %}
+
+<div class="container my-4">
+
+    <!-- Überschrift + Filter Toggle -->
+    <div class="d-flex justify-content-between align-items-center mb-1">
+        <h4 class=>Rezeptliste</h4>
+
+         <p class="text-muted mb-1">
+        {% if result_count == 1 %}
+            1 Ergebnis
+        {% else %}
+            {{ result_count }} Ergebnisse
+        {% endif %}
+        </p>
+
+        <button
+            class="btn btn-outline-secondary btn-sm d-flex align-items-center"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#filterCollapse"
+            aria-expanded="{% if request.GET %}true{% else %}false{% endif %}"
+            aria-controls="filterCollapse"
+            id="filterToggleBtn"
+        >
+            <i class="bi bi-sliders me-2 transition-icon"></i>
+            Filter
+            {% if request.GET %}
+                <span class="badge bg-primary ms-2">Aktiv</span>
+            {% endif %}
+        </button>
+    </div>
+
+    <!-- Collapse-Bereich für Filter -->
+    <div
+      id="filterCollapse"
+      class="collapse {% if request.GET %}show{% endif %} mb-4"
+    >
+        <form method="get" action="">
+            <div class="row g-1 align-items-end">
+
+                <!-- Suche -->
+                <div class="col-12 col-md-8">
+                    <label class="form-label">Suche</label>
+                    <input
+                        class="form-control"
+                        type="text"
+                        name="q"
+                        placeholder="Suche in Titel u. Zutaten"
+                        value="{{ request.GET.q }}"
+                    >
+                </div>
+            <div class="row g-2 align-items-end">
+                 <!-- Gesamtdauer -->
+                <div class="col-12 col-md-4">
+                    <label class="form-label">Gesamtdauer</label>
+                    <input
+                        class="form-control"
+                        type="number"
+                        name="max_duration"
+                        placeholder="min"
+                        value="{{ request.GET.max_duration }}"
+                    >
+                </div>
+                <!-- Arbeitsdauer -->
+                <div class="col-12 col-md-4">
+                    <label class="form-label">Arbeitsdauer</label>
+                    <input
+                        class="form-control"
+                        type="number"
+                        name="max_working_duration"
+                        placeholder="min"
+                        value="{{ request.GET.max_working_duration }}"
+                    >
+                </div>
+            </div>
+               
+                <!-- Kategorie-Filter -->
+                <div class="col-12 mt-3">
+                    <strong>Kategorien:</strong>
+                    <div class="mt-2">
+                        {% for label in labels_category %}
+                            <div class="form-check form-check-inline">
+                                <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    name="category_labels"
+                                    id="category-{{ label.id }}"
+                                    value="{{ label.id }}"
+                                    {% if label.id in selected_categories %}checked{% endif %}
+                                >
+                                <label class="form-check-label" for="category-{{ label.id }}">
+                                    {{ label.name }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Event-Filter -->
+                <div class="col-12 mt-3">
+                    <strong>Events:</strong>
+                    <div class="mt-2">
+                        {% for label in labels_event %}
+                            <div class="form-check form-check-inline">
+                                <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    name="event_labels"
+                                    id="event-{{ label.id }}"
+                                    value="{{ label.id }}"
+                                    {% if label.id in selected_events %}checked{% endif %}
+                                >
+                                <label class="form-check-label" for="event-{{ label.id }}">
+                                    {{ label.name }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="col-12 d-flex gap-2 mt-3 flex-wrap">
+                    <button class="btn btn-primary flex-fill" type="submit">
+                        <i class="bi bi-funnel me-1"></i> Filtern
+                    </button>
+                    <a href="{{ request.path }}" class="btn btn-success flex-fill">
+                        <i class="bi bi-arrow-counterclockwise me-1"></i> Zurücksetzen
+                    </a>
+                    <a href="{% url 'recipes:random' %}?{{ request.GET.urlencode }}" class="btn btn-secondary flex-fill">
+                        <i class="bi bi-shuffle me-1"></i> Zufall
+                    </a>
+                </div>
+
+            </div>
+        </form>
+
+        <!-- Sortierung -->
+        <div class="mb-3 d-flex align-items-center gap-2">
+            <label for="sort-select" class="form-label mb-0"><strong>Sortieren nach:</strong></label>
+            <select id="sort-select" class="form-select w-auto">
+                <option value="title" {% if request.GET.sort == "title" or not request.GET.sort %}selected{% endif %}>
+                    Alphabet
+                </option>
+                <option value="duration" {% if request.GET.sort == "duration" %}selected{% endif %}>
+                    Gesamtdauer
+                </option>
+            </select>
+        </div>
+    </div>
+
+    <hr>
+
+
+    <!-- Rezeptliste -->
+    <ul class="list-group">
+        {% for recipe in latest_recipe_list %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <a href="{% url 'recipes:detail' recipe.slug %}">
+                    {{ recipe.title }}
+                </a>
+                {% if recipe.duration_minutes %}
+                    <span class="badge bg-secondary">
+                        {{ recipe.duration_minutes }} Min
+                    </span>
+                {% endif %}
+            </li>
+        {% empty %}
+            <li class="list-group-item text-muted">
+                Keine Rezepte gefunden.
+            </li>
+        {% endfor %}
+    </ul>
+
+    <a href="{% url 'recipes:create' %}" class="btn btn-primary fab" title="Neues Rezept">
+        <i class="bi bi-plus-lg"></i>
+    </a>
+
+<script>
+document.getElementById("sort-select").addEventListener("change", function() {
+    const url = new URL(window.location.href);
+
+    // Filter in der URL erhalten
+    url.searchParams.set("sort", this.value);
+
+    window.location.href = url.toString();
+});
+</script>
+
+</div>
+
+{% endblock %}
