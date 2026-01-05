@@ -48,6 +48,11 @@ class Recipe(models.Model):
         help_text="Anleitung"
     )
    
+    cooked_count = models.PositiveIntegerField(
+        default=0,
+        help_text="So oft wurde das Rezept schon gekocht"
+    )
+
     def save(self, *args, **kwargs):
         if not self.slug:
             base_slug = slugify(self.title)

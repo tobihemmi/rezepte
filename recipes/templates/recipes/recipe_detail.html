@@ -8,27 +8,18 @@
 <div class="p-2 mb-3 bg-body-tertiary rounded-3">
     <div class="container">
 
-        <!-- Titel & Löschen-Button & Bearbeiten-Button -->
-
+        <!-- Titel & Buttons -->
         <div class="d-flex align-items-center mb-3">
-            <!-- Titel -->
-            <h4 class="flex-grow-1 mb-0">
-                {{ recipe.title }}
-            </h4>
+            <h4 class="flex-grow-1 mb-0">{{ recipe.title }}</h4>
         </div>
         <div class="d-flex justify-content-end gap-2 mb-2">
-            <a href="https://todoist.com/add?content={{ '['|add:recipe.title|add:']('|add:request.build_absolute_uri|add:') #WG /Essensplanung'|urlencode }}"
-            target="_blank"
-            class="btn btn-primary">
+            <a href="https://todoist.com/add?content={{ '['|add:recipe.title|add:']('|add:request.build_absolute_uri|add:') #WG /Essensplanung'|urlencode }}" target="_blank" class="btn btn-primary">
                 <i class="bi bi-box-arrow-up"></i>
             </a>
-            <a href="{% url 'recipes:update' recipe.slug %}"
-            class="btn btn-success">
+            <a href="{% url 'recipes:update' recipe.slug %}" class="btn btn-success">
                 <i class="bi bi-pencil-square"></i>
             </a>
-
-            <a href="{% url 'recipes:delete' recipe.slug %}"
-            class="btn btn-danger">
+            <a href="{% url 'recipes:delete' recipe.slug %}" class="btn btn-danger">
                 <i class="bi bi-trash-fill"></i>
             </a>
         </div>
@@ -36,104 +27,96 @@
         <!-- Bild -->
         {% if recipe.image %}
         <div class="recipe-image-wrapper text-center mb-4">
-            <img
-                src="{{ recipe.image.url }}"
-                class="img-fluid rounded recipe-image"
-                alt="{{ recipe.title }}"
-            >
+            <img src="{{ recipe.image.url }}" class="img-fluid rounded recipe-image" alt="{{ recipe.title }}">
         </div>
         {% endif %}
 
-
         <!-- Dauer & Temperatur -->
-        {% if recipe.duration_minutes %}
-            <p><strong>Gesamtdauer:</strong> {{ recipe.duration_minutes }} Minuten</p>
-        {% endif %}
-        {% if recipe.working_time %}
-            <p><strong>Arbeitsdauer:</strong> {{ recipe.working_time }} Minuten</p>
-        {% endif %}
-    
-        {% if recipe.temperature_celsius %}
-            <p><strong>Temperatur:</strong> {{ recipe.temperature_celsius }} °C Ober-/Unterhitze</p>
-        {% endif %}
+        {% if recipe.duration_minutes %}<p><strong>Gesamtdauer:</strong> {{ recipe.duration_minutes }} Minuten</p>{% endif %}
+        {% if recipe.working_time %}<p><strong>Arbeitsdauer:</strong> {{ recipe.working_time }} Minuten</p>{% endif %}
+        {% if recipe.temperature_celsius %}<p><strong>Temperatur:</strong> {{ recipe.temperature_celsius }} °C Ober-/Unterhitze</p>{% endif %}
 
         <!-- Labels -->
         {% if recipe.labels.all %}
-            <p>
-                <strong>Labels:</strong>
-                {% for label in recipe.labels.all %}
-                    {% if label.label_type == "category" %}
-                        <span class="badge rounded-pill border text-primary">{{ label.name }}</span>
-                    {% elif label.label_type == "event" %}
-                        <span class="badge rounded-pill border text-success">{{ label.name }}</span>
-                    {% else %}
-                        <span class="badge rounded-pill border text-secondary">{{ label.name }}</span>
-                    {% endif %}
-                {% endfor %}
-            </p>
+        <p><strong>Labels:</strong>
+            {% for label in recipe.labels.all %}
+                {% if label.label_type == "category" %}
+                    <span class="badge rounded-pill border text-primary">{{ label.name }}</span>
+                {% elif label.label_type == "event" %}
+                    <span class="badge rounded-pill border text-success">{{ label.name }}</span>
+                {% else %}
+                    <span class="badge rounded-pill border text-secondary">{{ label.name }}</span>
+                {% endif %}
+            {% endfor %}
+        </p>
         {% endif %}
 
-        <!-- Portionsformular -->
-         <div class="mb-3">
-            <label class="form-label">
-                <strong>Portionen:</strong>
-            </label>
-
-            <div class="input-group" style="max-width: 200px;">
-                <button class="btn btn-outline-secondary" id="minus-btn" type="button">−</button>
-
-                <input
-                    type="number"
-                    id="servings-input"
-                    class="form-control text-center"
-                    value="{{ base_servings }}"
-                    min="1"
-                >
-
-                <button class="btn btn-outline-secondary" id="plus-btn" type="button">+</button>
-            </div>
-
-            <small class="text-muted">
-                Basisrezept für {{ base_servings }} Portionen
-            </small>
+        <!-- 🍳 Koch-Counter -->
+        <div class="mb-3 p-2 border rounded d-flex flex-wrap align-items-center gap-2">
+            <form method="post" class="d-flex align-items-center gap-2 mb-0">
+                {% csrf_token %}
+                <button type="submit" name="cooked" class="btn btn-success btn-sm">Habe ich gekocht</button>
+                {% if recipe.cooked_count > 0 %}
+                    <button type="submit" name="undo_cooked" class="btn btn-secondary btn-sm">Rückgängig</button>
+                {% endif %}
+            </form>
+            <span class="text-muted ms-auto">🍳 {{ recipe.cooked_count }} mal gekocht</span>
         </div>
 
+        <!-- Portionsauswahl -->
+        <div class="mb-3">
+            <label class="form-label"><strong>Portionen:</strong></label>
+            <div class="input-group" style="max-width: 200px;">
+                <button class="btn btn-outline-secondary" id="minus-btn" type="button">−</button>
+                <input type="number" id="servings-input" class="form-control text-center" value="{{ current_servings }}" min="1">
+                <button class="btn btn-outline-secondary" id="plus-btn" type="button">+</button>
+            </div>
+            <small class="text-muted">Basisrezept für {{ base_servings }} Portionen</small>
+        </div>
+
+        <!-- Kochmodus-Link -->
+        <a id="cook-link" href="{% url 'recipes:cook' recipe.slug %}?servings={{ current_servings }}" class="btn btn-outline-primary btn-sm mb-3">
+            Kochmodus starten
+        </a>
 
         <!-- Zutaten -->
         {% if recipe.ingredients %}
-            <h3>Zutaten</h3>
-            <ul class="list-group list-group-flush" id="ingredients-list">
-                {% for ingredient in ingredients_list %}
-                    <li class="list-group-item ingredient-item"
-                        data-original="{{ ingredient }}">
-                        {{ ingredient }}
-                    </li>
-                {% endfor %}
-            </ul>
-
-            <br>
+        <h3>Zutaten</h3>
+        <ul class="list-group list-group-flush" id="ingredients-list">
+            {% for ingredient in ingredients_list %}
+                <li class="list-group-item ingredient-item" data-original="{{ ingredient }}">
+                    {{ ingredient }}
+                </li>
+            {% endfor %}
+        </ul>
+        <br>
         {% endif %}
 
         <!-- Zubereitungsschritte -->
         {% if recipe.steps %}
-            <h3>Zubereitungsschritte</h3>
-            <ol class="list-group list-group-numbered">
-                {% for step in steps_list %}
-                    <li class="list-group-item">{{ step }}</li>
-                {% endfor %}
-            </ol>
+        <h3>Zubereitungsschritte</h3>
+        <ol class="list-group list-group-numbered">
+            {% for step in steps_list %}
+                <li class="list-group-item">{{ step }}</li>
+            {% endfor %}
+        </ol>
         {% endif %}
 
     </div>
 
-
 <script>
 document.addEventListener("DOMContentLoaded", function() {
+    const servingsInput = document.getElementById("servings-input");
+    const cookLink = document.getElementById("cook-link");
     const minusBtn = document.getElementById("minus-btn");
     const plusBtn = document.getElementById("plus-btn");
-    const servingsInput = document.getElementById("servings-input");
     const ingredientsList = document.querySelectorAll("#ingredients-list .ingredient-item");
     const baseServings = parseInt("{{ base_servings }}", 10);
+
+    function updateCookLink() {
+        const val = parseInt(servingsInput.value) || baseServings;
+        cookLink.href = "{% url 'recipes:cook' recipe.slug %}?servings=" + val;
+    }
 
     function updateIngredients() {
         const currentServings = parseFloat(servingsInput.value) || baseServings;
@@ -141,55 +124,40 @@ document.addEventListener("DOMContentLoaded", function() {
 
         ingredientsList.forEach(item => {
             const original = item.dataset.original.trim();
-
-            // Regex, um die erste Zahl zu finden (inkl. Dezimalzahlen)
             const match = original.match(/^([\d.,/]+)\s*(.*)$/);
             if (match) {
                 let amountStr = match[1].replace(",", ".");
                 let rest = match[2];
 
-                // Versuche, die Zahl zu parsen (unterstützt auch Brüche wie "1/2")
                 let amount = parseFloat(amountStr);
                 if (isNaN(amount) && amountStr.includes("/")) {
                     const parts = amountStr.split("/");
-                    if (parts.length === 2) {
-                        amount = parseFloat(parts[0]) / parseFloat(parts[1]);
-                    }
+                    if (parts.length === 2) amount = parseFloat(parts[0])/parseFloat(parts[1]);
                 }
 
-                if (!isNaN(amount)) {
-                    const newAmount = Math.round(amount * factor * 100) / 100;
-                    item.textContent = newAmount + " " + rest;
-                } else {
-                    // fallback, falls Zahl nicht erkannt wird
-                    item.textContent = original;
-                }
+                item.textContent = !isNaN(amount) ? (Math.round(amount * factor * 100)/100) + " " + rest : original;
             } else {
-                // fallback, falls keine Zahl vorhanden ist
                 item.textContent = original;
             }
         });
     }
 
-
-    minusBtn.addEventListener("click", function() {
-        let value = parseInt(servingsInput.value) || baseServings;
-        if (value > 1) {
-            servingsInput.value = value - 1;
-            updateIngredients();
-        }
-    });
-
-    plusBtn.addEventListener("click", function() {
-        let value = parseInt(servingsInput.value) || baseServings;
-        servingsInput.value = value + 1;
+    // Events
+    servingsInput.addEventListener("input", function() {
+        updateCookLink();
         updateIngredients();
     });
-
-    // Wenn man die Zahl selbst eintippt
-    servingsInput.addEventListener("input", updateIngredients);
+    minusBtn.addEventListener("click", function() {
+        let value = parseInt(servingsInput.value) || baseServings;
+        if (value > 1) { servingsInput.value = value-1; updateCookLink(); updateIngredients(); }
+    });
+    plusBtn.addEventListener("click", function() {
+        let value = parseInt(servingsInput.value) || baseServings;
+        servingsInput.value = value+1; updateCookLink(); updateIngredients();
+    });
 
     // Initiales Update
+    updateCookLink();
     updateIngredients();
 });
 </script>

@@ -1,5 +1,4 @@
-from django.db.models import F
-from django.db.models import Q
+from django.db.models import F, Q, Case, When, Value, IntegerField
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse_lazy
@@ -98,6 +97,8 @@ class IndexView(generic.ListView):
         sort_param = self.request.GET.get("sort", "title")  # Default = Alphabet
         if sort_param == "duration":
             qs = qs.order_by("duration_minutes")
+        elif sort_param =="cooked":
+            qs = qs.order_by("-cooked_count") #meistgekocht zuerst
         else:
             qs = qs.order_by("title")
 
@@ -121,58 +122,76 @@ class IndexView(generic.ListView):
 class DetailView(generic.DetailView):
     model = Recipe
     template_name = "recipes/recipe_detail.html"
+    slug_field = "slug"
+    slug_url_kwarg = "slug"
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if "cooked" in request.POST:
+            self.object.cooked_count = F("cooked_count") + 1
+            self.object.save(update_fields=["cooked_count"])
+        elif "undo_cooked" in request.POST:
+            self.object.cooked_count = Case(
+                When(cooked_count__gt=0, then=F("cooked_count") - 1),
+                default=Value(0),
+                output_field=IntegerField(),
+            )
+            self.object.save(update_fields=["cooked_count"])
+        return redirect(self.object.get_absolute_url())
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         recipe = self.object
 
-        # 🔢 gewünschte Portionen aus URL
+        # Basisportionen
+        base_servings = recipe.servings or 1
+
+        # User-angepasste Portionen via GET oder Standard
         try:
-            target_servings = int(self.request.GET.get("servings", recipe.servings))
-            if target_servings < 1:
-                target_servings = recipe.servings
+            current_servings = int(self.request.GET.get("servings", base_servings))
+            if current_servings < 1:
+                current_servings = base_servings
         except (TypeError, ValueError):
-            target_servings = recipe.servings
+            current_servings = base_servings
 
-        factor = target_servings / recipe.servings
+        context.update({
+            "recipe": recipe,
+            "base_servings": base_servings,
+            "current_servings": current_servings,
+            "ingredients_list": [line.strip() for line in recipe.ingredients.splitlines() if line.strip()],
+            "steps_list": [line.strip() for line in recipe.steps.splitlines() if line.strip()],
+        })
+        return context
 
-        ingredients_list = []
 
-        for line in recipe.ingredients.splitlines():
-            line = line.strip()
-            if not line:
-                continue
+class RecipeCookView(generic.DetailView):
+    model = Recipe
+    template_name = "recipes/recipe_cook.html"
+    slug_field = "slug"
+    slug_url_kwarg = "slug"
 
-            parts = line.split(" ", 2)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        recipe = self.object
 
-            # Erwartetes Format: "MENGE EINHEIT ZUTAT"
-            try:
-                amount = float(parts[0].replace(",", "."))
-                new_amount = round(amount * factor, 2)
-                ingredients_list.append(
-                    f"{new_amount:g} {' '.join(parts[1:])}"
-                )
-            except (ValueError, IndexError):
-                # z.B. "Salz nach Geschmack"
-                ingredients_list.append(line)
+        base_servings = recipe.servings or 1
 
-        # Zutaten aufsplitten
-        context["ingredients_list"] = [
-            line.strip()
-            for line in self.object.ingredients.splitlines()
-            if line.strip()
-        ]
-        
-        # Schritte aufsplitten
-        context["steps_list"] = [
-            line.strip()
-            for line in self.object.steps.splitlines()
-            if line.strip()
-        ]
+        # Gewünschte Portionen aus URL
+        try:
+            current_servings = int(self.request.GET.get("servings", base_servings))
+            if current_servings < 1:
+                current_servings = base_servings
+        except (TypeError, ValueError):
+            current_servings = base_servings
 
-        context["current_servings"] = target_servings
-        context["base_servings"] = recipe.servings
-
+        # Zutaten unverändert übergeben → JS skaliert
+        context.update({
+            "recipe": recipe,
+            "base_servings": base_servings,
+            "current_servings": current_servings,
+            "ingredients_list": [line.strip() for line in recipe.ingredients.splitlines() if line.strip()],
+            "steps_list": [line.strip() for line in recipe.steps.splitlines() if line.strip()],
+        })
         return context
 
 
