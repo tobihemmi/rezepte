@@ -81,12 +81,17 @@
             <button type="button" id="add-step" class="btn btn-success btn-sm"><i class="bi bi-plus"> Schritt hinzufügen</i></button>
         </div>
 
-        <!-- Externer Link (immer am Ende des Formulars) -->
-        <div class="mb-3">
-            <label class="form-label" for="external_link">Externer Link (optional)</label>
-            <!-- Das Formularfeld für `external_link` wird hier nur einmal angezeigt. -->
-            {{ form.external_link }}
-        </div>
+        <!-- Externer Link (innerhalb der Schleife behandeln) -->
+        {% for field in form %}
+            {% if field.name == "external_link" %}
+                <div class="mb-3">
+                    <label class="form-label" for="{{ field.id_for_label }}">
+                        <div class="form-text">{{ field.help_text }}</div>
+                    </label>
+                    {{ field|add_class:"form-control" }}
+                </div>
+            {% endif %}
+        {% endfor %}
 
         <!-- Buttons -->
         <button type="submit" class="btn btn-primary mt-3"><i class="bi bi-floppy"> Änderungen speichern</i></button>
