@@ -156,12 +156,21 @@ class DetailView(generic.DetailView):
         except (TypeError, ValueError):
             current_servings = base_servings
 
+        try:
+            ing_list = [line.strip() for line in recipe.ingredients.splitlines() if line.strip()]
+        except BaseException:
+            ing_list = []
+        try:
+            st_list = [line.strip() for line in recipe.steps.splitlines() if line.strip()]
+        except BaseException:
+            st_list = []
+
         context.update({
             "recipe": recipe,
             "base_servings": base_servings,
             "current_servings": current_servings,
-            "ingredients_list": [line.strip() for line in recipe.ingredients.splitlines() if line.strip()],
-            "steps_list": [line.strip() for line in recipe.steps.splitlines() if line.strip()],
+            "ingredients_list": ing_list,
+            "steps_list": st_list,
             "days": DAYS,
         })
         return context

@@ -15,6 +15,7 @@ class RecipeForm(forms.ModelForm):
             "temperature_celsius",
             "ingredients",
             "steps",
+            "external_link",
         ]
         widgets = {
             "ingredients": forms.Textarea(attrs={

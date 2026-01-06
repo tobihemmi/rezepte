@@ -2,20 +2,22 @@ from django.db import models
 from django.urls import reverse
 from django.utils.text import slugify
 from django.utils import timezone
-# Create your models here.
 
+# Rezeptmodell
 class Recipe(models.Model):
     title = models.CharField(
         max_length=200,
         help_text="Titel"
-        )
+    )
     slug = models.SlugField(
         unique=True,
         blank=True
-        )
-    servings =models.PositiveIntegerField(
-        help_text="Portionen"
-        )
+    )
+    servings = models.PositiveIntegerField(
+        help_text="Portionen",
+        null=True,
+        blank=True,
+    )
     image = models.ImageField(
         upload_to='recipes/',
         blank=True,
@@ -26,7 +28,7 @@ class Recipe(models.Model):
         "Label",
         blank=True,
         help_text="Label"
-        )
+    )
     duration_minutes = models.PositiveIntegerField(
         null=True,
         blank=True,
@@ -43,16 +45,26 @@ class Recipe(models.Model):
         help_text="Back-/Ofentemperatur in °C (Ober-/Unterhitze)"
     )
     ingredients = models.CharField(
+        null=True,
+        blank=True,
+        max_length=1000,  # Du solltest hier eine Länge definieren, falls du lange Zutatenlisten erwartest
         help_text="Zutaten"
     )
     steps = models.CharField(
+        null=True,
+        blank=True,
+        max_length=1000,  # Ebenso für Schritte
         help_text="Anleitung"
     )
-   
     cooked_count = models.PositiveIntegerField(
         default=0,
         help_text="So oft wurde das Rezept schon gekocht"
     )
+    external_link = models.URLField(
+        blank=True,
+        null=True,
+        help_text="Fügen Sie einen externen Link hinzu."
+    )  # Neues Feld für den externen Link
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -71,6 +83,7 @@ class Recipe(models.Model):
     def __str__(self):
         return self.title
 
+# Labelmodell
 class Label(models.Model):
     EVENT = "event"
     CATEGORY = "category"
@@ -86,13 +99,14 @@ class Label(models.Model):
     def __str__(self):
         return self.name
 
+# Wochenplanmodell
 class WeeklyPlan(models.Model):
-    # Es gibt nur einen Plan, daher brauchen wir keine User-Zuordnung
     week_start = models.DateField(default=timezone.now)
 
     def __str__(self):
         return f"Wochenplan ab {self.week_start}"
 
+# Wochentage für den Plan
 DAY_CHOICES = [
     ('Monday', 'Montag'),
     ('Tuesday', 'Dienstag'),
@@ -103,6 +117,7 @@ DAY_CHOICES = [
     ('Sunday', 'Sonntag'),
 ]
 
+# Modell für die Wochenplaneinträge
 class WeeklyPlanEntry(models.Model):
     plan = models.ForeignKey(WeeklyPlan, related_name="entries", on_delete=models.CASCADE)
     day = models.CharField(max_length=10, choices=DAY_CHOICES)
