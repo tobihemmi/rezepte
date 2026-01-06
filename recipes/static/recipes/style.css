@@ -35,3 +35,13 @@ li a {
 #filterToggleBtn[aria-expanded="true"] .transition-icon {
     transform: rotate(90deg);
 }
+/* Passt Tom Select an die Bootstrap 'sm' (small) Größe an */
+.ts-wrapper.form-control-sm .ts-control {
+    padding: 5px 10px;
+    min-height: 31px;
+    font-size: 0.875rem;
+}
+
+.ts-dropdown {
+    font-size: 0.875rem;
+}
