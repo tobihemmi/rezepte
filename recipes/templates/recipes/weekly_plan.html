@@ -65,32 +65,44 @@
                         <li class="list-group-item text-muted empty-entry">Keine Rezepte</li>
                     {% endfor %}
                 </ul>
-
-                <!-- Rezept suchen & hinzufügen -->
-                <div class="card-footer">
-                    <input
-                        type="text"
-                        class="form-control form-control-sm recipe-filter"
-                        placeholder="+ Rezept suchen…"
-                        data-day="{{ day }}"
-                        autocomplete="off"
-                    >
-
-                    <!-- Ergebnisliste -->
-                    <ul class="list-group mt-2 recipe-results d-none"
-                        style="max-height: 160px; overflow-y: auto;">
-                        {% for recipe in recipes %}
-                            <li class="list-group-item list-group-item-action py-1" data-id="{{ recipe.id }}">
-                                {{ recipe.title }}
-                            </li>
-                        {% endfor %}
-                    </ul>
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-body">
+                        <h6 class="card-title">Rezept hinzufügen</h6>
+                        <form method="GET" action="{% url 'recipes:weekly_plan' %}" class="row g-2 align-items-center">
+                            <input type="hidden" name="action" value="add">
+                            <input type="hidden" name="day" value="{{ day }}">
+                            
+                            <div class="col-md-6">
+                                <select id="recipe-select" name="recipe_id" placeholder="Rezept suchen..." autocomplete="off" required>
+                                    {% for recipe in recipes %}
+                                        <option value="{{ recipe.id }}">{{ recipe.title }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="submit" class="btn btn-primary w-100">Hinzufügen</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-
             </div>
         </div>
         {% endfor %}
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+<script>
+    // Selektiert alle select-Elemente, die den Namen "recipe_id" haben
+    document.querySelectorAll('select[name="recipe_id"]').forEach((el) => {
+        new TomSelect(el, {
+            create: false,
+            sortField: { field: "text", direction: "asc" },
+            placeholder: "Rezept suchen...",
+            allowEmptyOption: true
+        });
+    });
+</script>
+
 {% endblock %}
+
