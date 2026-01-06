@@ -1,6 +1,7 @@
 from django.db import models
 from django.urls import reverse
 from django.utils.text import slugify
+from django.utils import timezone
 # Create your models here.
 
 class Recipe(models.Model):
@@ -84,3 +85,31 @@ class Label(models.Model):
 
     def __str__(self):
         return self.name
+
+class WeeklyPlan(models.Model):
+    # Es gibt nur einen Plan, daher brauchen wir keine User-Zuordnung
+    week_start = models.DateField(default=timezone.now)
+
+    def __str__(self):
+        return f"Wochenplan ab {self.week_start}"
+
+DAY_CHOICES = [
+    ('Monday', 'Montag'),
+    ('Tuesday', 'Dienstag'),
+    ('Wednesday', 'Mittwoch'),
+    ('Thursday', 'Donnerstag'),
+    ('Friday', 'Freitag'),
+    ('Saturday', 'Samstag'),
+    ('Sunday', 'Sonntag'),
+]
+
+class WeeklyPlanEntry(models.Model):
+    plan = models.ForeignKey(WeeklyPlan, related_name="entries", on_delete=models.CASCADE)
+    day = models.CharField(max_length=10, choices=DAY_CHOICES)
+    recipe = models.ForeignKey('Recipe', on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ['day', 'id']  # damit die Einträge in Tagesreihenfolge angezeigt werden
+
+    def __str__(self):
+        return f"{self.day}: {self.recipe.title}"

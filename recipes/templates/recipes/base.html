@@ -14,12 +14,14 @@
     <body>
         <nav class="navbar navbar-light bg-light">
             <div class="navbar-nav d-flex flex-row gap-3 ps-3">
-    </form>
+                <a class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}" 
+                href="{% url 'recipes:index' %}">Rezepte</a>
 
-                <a class="nav-link active" href="{% url 'recipes:index' %}">Rezepte</a>
-                <a class="nav-link disabled">Wochenplan</a>
+                <a class="nav-link {% if request.resolver_match.url_name == 'weekly_plan' %}active{% endif %}" 
+                href="{% url 'recipes:weekly_plan' %}">Wochenplan</a>
             </div>
         </nav>
+
         
         {% block content %}{% endblock %}
 

@@ -4,11 +4,13 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse_lazy
 from django.views import generic, View
 from django.views.generic import CreateView, DeleteView, TemplateView
+from django.utils import timezone
 import random
 
-from .models import Recipe, Label
+from .models import Recipe, Label, WeeklyPlan, WeeklyPlanEntry
 from .forms import RecipeForm
 
+DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
 class RecipeCreateView(CreateView):
     model = Recipe
@@ -207,3 +209,36 @@ class RandomRecipeView(TemplateView):
 
         context["recipe"] = random.choice(list(qs)) if qs.exists() else None
         return context
+    
+def weekly_plan_view(request):
+    # Immer der aktuelle Wochenplan
+    week_start = timezone.now().date()
+    plan, _ = WeeklyPlan.objects.get_or_create(week_start=week_start)
+
+    # Aktionen: Rezept hinzufügen oder entfernen
+    action = request.GET.get("action")
+    recipe_id = request.GET.get("recipe_id")
+    day = request.GET.get("day")
+
+    if action == "add" and recipe_id and day in DAYS:
+        recipe = get_object_or_404(Recipe, id=recipe_id)
+        WeeklyPlanEntry.objects.create(plan=plan, day=day, recipe=recipe)
+        return redirect("recipes:weekly_plan")
+
+    if action == "remove":
+        entry_id = request.GET.get("entry_id")
+        if entry_id:
+            entry = get_object_or_404(WeeklyPlanEntry, id=entry_id)
+            entry.delete()
+            return redirect("recipes:weekly_plan")
+
+    # Erstelle Liste von Tupeln (Tag, Einträge), weil Templates keine [] für Dict unterstützen
+    day_entries_list = [(day_name, plan.entries.filter(day=day_name)) for day_name in DAYS]
+
+    context = {
+        "plan": plan,
+        "day_entries_list": day_entries_list,
+        "recipes": Recipe.objects.all(),  # für Dropdown
+    }
+    return render(request, "recipes/weekly_plan.html", context)
+
