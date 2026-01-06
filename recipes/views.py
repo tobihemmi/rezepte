@@ -162,6 +162,7 @@ class DetailView(generic.DetailView):
             "current_servings": current_servings,
             "ingredients_list": [line.strip() for line in recipe.ingredients.splitlines() if line.strip()],
             "steps_list": [line.strip() for line in recipe.steps.splitlines() if line.strip()],
+            "days": ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],  # NEU
         })
         return context
 
