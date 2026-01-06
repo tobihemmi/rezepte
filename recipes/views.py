@@ -215,27 +215,57 @@ def weekly_plan_view(request):
     week_start = timezone.now().date()
     plan, _ = WeeklyPlan.objects.get_or_create(week_start=week_start)
 
-    # Handle Add / Remove Aktionen
-    action = request.GET.get("action")
-    recipe_id = request.GET.get("recipe_id")
-    day = request.GET.get("day")
+    # GET-Parameter kopieren, um sie beim Redirect weiterzugeben
+    params = request.GET.copy()
+
+    action = params.get("action")
+    recipe_id = params.get("recipe_id")
+    day = params.get("day")
 
     if action == "add" and recipe_id and day in DAYS:
         recipe = get_object_or_404(Recipe, id=recipe_id)
         WeeklyPlanEntry.objects.create(plan=plan, day=day, recipe=recipe)
-        # Filter und Sort-Parameter optional weitergeben
-        params = request.GET.copy()
-        params.pop("recipe_id", None)
-        params.pop("action", None)
-        params.pop("day", None)
+
+        # Entferne Aktions-Parameter, damit die URL sauber bleibt
+        for key in ["recipe_id", "action", "day", "entry_id"]:
+            params.pop(key, None)
+
         return redirect(f"{reverse('recipes:weekly_plan')}?{params.urlencode()}")
 
-    if action == "remove":
-        entry_id = request.GET.get("entry_id")
+    elif action == "move":
+        entry_id = params.get("entry_id")
+        new_day = params.get("day")
+        if entry_id and new_day in DAYS:
+            entry = get_object_or_404(WeeklyPlanEntry, id=entry_id)
+            entry.day = new_day
+            entry.save()
+
+            # Filter behalten
+            for key in ["action", "entry_id", "day", "recipe_id"]:
+                params.pop(key, None)
+
+            return redirect(f"{reverse('recipes:weekly_plan')}?{params.urlencode()}")
+
+    elif action == "remove":
+        entry_id = params.get("entry_id")
         if entry_id:
             entry = get_object_or_404(WeeklyPlanEntry, id=entry_id)
             entry.delete()
-            return redirect("recipes:weekly_plan")
+
+            # Filter behalten
+            for key in ["action", "entry_id", "day", "recipe_id"]:
+                params.pop(key, None)
+
+            return redirect(f"{reverse('recipes:weekly_plan')}?{params.urlencode()}")
+    elif action == "clear":
+        # Alle Einträge des aktuellen Wochenplans löschen
+        plan.entries.all().delete()
+
+        # Filter behalten
+        for key in ["action", "recipe_id", "day", "entry_id"]:
+            params.pop(key, None)
+
+        return redirect(f"{reverse('recipes:weekly_plan')}?{params.urlencode()}")
 
     # Tagesweise Einträge als Liste von Tupeln (Tag, Einträge)
     day_entries_list = [(day_name, plan.entries.filter(day=day_name)) for day_name in DAYS]
@@ -244,5 +274,6 @@ def weekly_plan_view(request):
         "plan": plan,
         "day_entries_list": day_entries_list,
         "recipes": Recipe.objects.all(),
+        "days": DAYS,  # wichtig für das Dropdown in der Vorlage
     }
     return render(request, "recipes/weekly_plan.html", context)

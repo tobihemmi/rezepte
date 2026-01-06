@@ -6,39 +6,124 @@
 
 {% block content %}
 <div class="container my-4">
-    <h3>Wochenplan</h3>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Wochenplan</h3>
+        <a href="?action=clear" class="btn btn-danger btn-sm" title="Alle Einträge löschen">&times; Alle löschen</a>
+    </div>
+
     <div class="row g-3">
         {% for day, entries in day_entries_list %}
         <div class="col-md-3 col-sm-6">
             <div class="card h-100">
+
+                <!-- Tages-Header -->
                 <div class="card-header bg-primary text-white">
                     {{ day }}
                 </div>
-                <ul class="list-group list-group-flush">
+
+                <!-- Einträge -->
+                <ul class="list-group list-group-flush day-list" data-day="{{ day }}">
                     {% for entry in entries %}
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <a href="{{ entry.recipe.get_absolute_url }}">{{ entry.recipe.title }}</a>
-                        <a href="?action=remove&entry_id={{ entry.id }}" class="text-danger">&times;</a>
-                    </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <a href="{{ entry.recipe.get_absolute_url }}">
+                                {{ entry.recipe.title }}
+                            </a>
+                            <a href="?action=remove&entry_id={{ entry.id }}" class="text-danger text-decoration-none" title="Entfernen">&times;</a>
+                        </li>
                     {% empty %}
-                    <li class="list-group-item text-muted">Keine Rezepte</li>
+                        <li class="list-group-item text-muted empty-entry">Keine Rezepte</li>
                     {% endfor %}
                 </ul>
+
+                <!-- Rezept suchen & hinzufügen -->
                 <div class="card-footer">
-                    <form method="get" class="d-flex">
-                        <input type="hidden" name="action" value="add">
-                        <input type="hidden" name="day" value="{{ day }}">
-                        <select name="recipe_id" class="form-select me-1">
-                            {% for recipe in recipes %}
-                            <option value="{{ recipe.id }}">{{ recipe.title }}</option>
-                            {% endfor %}
-                        </select>
-                        <button type="submit" class="btn btn-success btn-sm">+</button>
-                    </form>
+                    <input
+                        type="text"
+                        class="form-control form-control-sm recipe-filter"
+                        placeholder="+ Rezept suchen…"
+                        data-day="{{ day }}"
+                        autocomplete="off"
+                    >
+
+                    <!-- Ergebnisliste -->
+                    <ul class="list-group mt-2 recipe-results d-none"
+                        style="max-height: 160px; overflow-y: auto;">
+                        {% for recipe in recipes %}
+                            <li class="list-group-item list-group-item-action py-1" data-id="{{ recipe.id }}">
+                                {{ recipe.title }}
+                            </li>
+                        {% endfor %}
+                    </ul>
                 </div>
+
             </div>
         </div>
         {% endfor %}
     </div>
 </div>
+
+<!-- JS: Filtern & Hinzufügen -->
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+<script>
+// Suchfeld hinzufügen
+document.querySelectorAll(".recipe-filter").forEach(input => {
+    const results = input.nextElementSibling;
+
+    input.addEventListener("input", function () {
+        const term = this.value.toLowerCase().trim();
+        let hasResults = false;
+
+        results.querySelectorAll("li").forEach(li => {
+            const match = li.textContent.toLowerCase().includes(term);
+            li.style.display = match ? "block" : "none";
+            if (match) hasResults = true;
+        });
+
+        results.classList.toggle("d-none", !hasResults);
+    });
+
+    results.querySelectorAll("li").forEach(li => {
+        li.addEventListener("click", function () {
+            const recipeId = this.dataset.id;
+            const day = input.dataset.day;
+
+            const url = new URL(window.location.href);
+            url.searchParams.set("action", "add");
+            url.searchParams.set("recipe_id", recipeId);
+            url.searchParams.set("day", day);
+
+            window.location.href = url.toString();
+        });
+    });
+});
+
+// Drag & Drop per Tag
+document.querySelectorAll(".day-list").forEach(list => {
+    new Sortable(list, {
+        group: "shared",
+        animation: 150,
+        handle: "li:not(.empty-entry)",
+        draggable: "li:not(.empty-entry)",
+        filter: ".empty-entry",
+        preventOnFilter: false,
+        fallbackOnBody: true,
+        swapThreshold: 0.65,
+        delay: 150,           // Millisekunden, erst danach Drag starten
+        delayOnTouchOnly: true,
+        touchStartThreshold: 40,
+        onEnd: function (evt) {
+            const entryId = evt.item.querySelector("a.text-danger")?.href.split("entry_id=")[1];
+            const newDay = evt.to.dataset.day;
+            if (!entryId) return;
+
+            const url = new URL(window.location.href);
+            url.searchParams.set("action", "move");
+            url.searchParams.set("entry_id", entryId);
+            url.searchParams.set("day", newDay);
+
+            window.location.href = url.toString();
+        }
+    });
+});
+</script>
 {% endblock %}
