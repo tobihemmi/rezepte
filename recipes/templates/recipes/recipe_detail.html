@@ -109,7 +109,7 @@
             <ul class="list-group list-group-flush" id="ingredients-list">
                 {% for ingredient in ingredients_list %}
                     <li class="list-group-item ingredient-item" data-original="{{ ingredient }}">
-                        {{ ingredient }}
+                        <span>{{ ingredient }}</span>
                     </li>
                 {% endfor %}
             </ul>
@@ -130,7 +130,59 @@
     </div>
 
 <script>
-// Deine bestehende JavaScript Logik bleibt hier erhalten
+document.addEventListener("DOMContentLoaded", function() {
+    const minusBtn = document.getElementById("minus-btn");
+    const plusBtn = document.getElementById("plus-btn");
+    const servingsInput = document.getElementById("servings-input");
+    const ingredientsList = document.querySelectorAll("#ingredients-list .ingredient-item");
+
+    const baseServings = parseFloat("{{ base_servings }}");
+
+    function updateIngredients() {
+        const currentServings = parseFloat(servingsInput.value) || baseServings;
+        const factor = currentServings / baseServings;
+
+        ingredientsList.forEach(item => {
+            const original = item.dataset.original.trim();
+            const match = original.match(/^([\d.,/]+)\s*(.*)$/);
+            if (match) {
+                let amountStr = match[1].replace(",", ".");
+                let rest = match[2];
+
+                let amount = parseFloat(amountStr);
+                if (isNaN(amount) && amountStr.includes("/")) {
+                    const parts = amountStr.split("/");
+                    if (parts.length === 2) amount = parseFloat(parts[0])/parseFloat(parts[1]);
+                }
+
+                item.querySelector("span").textContent = !isNaN(amount) ? (Math.round(amount * factor * 100)/100) + " " + rest : original;
+            } else {
+                item.querySelector("span").textContent = original;
+            }
+        });
+    }
+
+    minusBtn.addEventListener("click", function() {
+        let value = parseInt(servingsInput.value) || baseServings;
+        if (value > 1) {
+            servingsInput.value = value - 1;
+            updateIngredients();
+        }
+    });
+
+    plusBtn.addEventListener("click", function() {
+        let value = parseInt(servingsInput.value) || baseServings;
+        servingsInput.value = value + 1;
+        updateIngredients();
+    });
+
+    servingsInput.addEventListener("input", updateIngredients);
+
+    // Initiales Update
+    updateIngredients();
+});
 </script>
+
+
 </div>
 {% endblock %}

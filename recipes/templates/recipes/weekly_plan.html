@@ -13,7 +13,7 @@
 
     <div class="row g-3">
         {% for day, entries in day_entries_list %}
-        <div class="col-md-3 col-sm-6">
+        <div class="col-md-4 col-sm-6">
             <div class="card">
 
                 <!-- Tages-Header -->
@@ -36,7 +36,7 @@
                                 </h2>
                                 <div id="collapseOne{{ entry.id }}" class="accordion-collapse collapse" data-bs-parent="#accordion{{ entry.id }}">
                                     <div class="accordion-body">
-                                        <div class="d-flex justify-content-between gap-2 mb-2">
+                                        <div class="d-flex justify-content-start gap-2 mb-2">
                                             <a class="btn btn-sm btn-outline-primary" href="{{ entry.recipe.get_absolute_url }}">
                                                     Öffnen
                                                 </a>
