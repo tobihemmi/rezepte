@@ -13,16 +13,22 @@
             <h4 class="flex-grow-1 mb-0">{{ recipe.title }}</h4>
         </div>
         <div class="d-flex justify-content-end gap-2 mb-2">
-            <form method="get" action="{% url 'recipes:weekly_plan' %}" class="d-flex align-items-center mt-3">
-                <input type="hidden" name="action" value="add">
-                <input type="hidden" name="recipe_id" value="{{ recipe.id }}">
-                <select name="day" class="form-select me-2" style="max-width: 150px;">
+            <!-- Wochenplan hinzufügen Dropdown -->
+            <div class="dropdown d-inline">
+                <button class="btn btn-success dropdown-toggle" type="button" id="addToPlanDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-calendar-event"></i>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="addToPlanDropdown">
                     {% for day in days %}
-                    <option value="{{ day }}">{{ day }}</option>
+                        <li>
+                            <a class="dropdown-item"
+                            href="{% url 'recipes:weekly_plan' %}?action=add&recipe_id={{ recipe.id }}&day={{ day }}{% if request.GET %}&{{ request.GET.urlencode }}{% endif %}">
+                            {{ day }}
+                            </a>
+                        </li>
                     {% endfor %}
-                </select>
-                <button type="submit" class="btn btn-primary btn-sm">Zum Wochenplan hinzufügen</button>
-            </form>
+                </ul>
+            </div>
             <a href="https://todoist.com/add?content={{ '['|add:recipe.title|add:']('|add:request.build_absolute_uri|add:') #WG /Essensplanung'|urlencode }}" target="_blank" class="btn btn-primary">
                 <i class="bi bi-box-arrow-up"></i>
             </a>
@@ -151,7 +157,6 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
     }
-
     // Events
     servingsInput.addEventListener("input", function() {
         updateCookLink();
@@ -171,6 +176,6 @@ document.addEventListener("DOMContentLoaded", function() {
     updateIngredients();
 });
 </script>
-
 </div>
 {% endblock %}
+

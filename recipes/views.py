@@ -1,7 +1,7 @@
 from django.db.models import F, Q, Case, When, Value, IntegerField
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render, redirect
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.views import generic, View
 from django.views.generic import CreateView, DeleteView, TemplateView
 from django.utils import timezone
@@ -10,7 +10,7 @@ import random
 from .models import Recipe, Label, WeeklyPlan, WeeklyPlanEntry
 from .forms import RecipeForm
 
-DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+DAYS = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag']
 
 class RecipeCreateView(CreateView):
     model = Recipe
@@ -162,7 +162,7 @@ class DetailView(generic.DetailView):
             "current_servings": current_servings,
             "ingredients_list": [line.strip() for line in recipe.ingredients.splitlines() if line.strip()],
             "steps_list": [line.strip() for line in recipe.steps.splitlines() if line.strip()],
-            "days": ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],  # NEU
+            "days": DAYS,
         })
         return context
 
@@ -212,11 +212,10 @@ class RandomRecipeView(TemplateView):
         return context
     
 def weekly_plan_view(request):
-    # Immer der aktuelle Wochenplan
     week_start = timezone.now().date()
     plan, _ = WeeklyPlan.objects.get_or_create(week_start=week_start)
 
-    # Aktionen: Rezept hinzufügen oder entfernen
+    # Handle Add / Remove Aktionen
     action = request.GET.get("action")
     recipe_id = request.GET.get("recipe_id")
     day = request.GET.get("day")
@@ -224,7 +223,12 @@ def weekly_plan_view(request):
     if action == "add" and recipe_id and day in DAYS:
         recipe = get_object_or_404(Recipe, id=recipe_id)
         WeeklyPlanEntry.objects.create(plan=plan, day=day, recipe=recipe)
-        return redirect("recipes:weekly_plan")
+        # Filter und Sort-Parameter optional weitergeben
+        params = request.GET.copy()
+        params.pop("recipe_id", None)
+        params.pop("action", None)
+        params.pop("day", None)
+        return redirect(f"{reverse('recipes:weekly_plan')}?{params.urlencode()}")
 
     if action == "remove":
         entry_id = request.GET.get("entry_id")
@@ -233,13 +237,12 @@ def weekly_plan_view(request):
             entry.delete()
             return redirect("recipes:weekly_plan")
 
-    # Erstelle Liste von Tupeln (Tag, Einträge), weil Templates keine [] für Dict unterstützen
+    # Tagesweise Einträge als Liste von Tupeln (Tag, Einträge)
     day_entries_list = [(day_name, plan.entries.filter(day=day_name)) for day_name in DAYS]
 
     context = {
         "plan": plan,
         "day_entries_list": day_entries_list,
-        "recipes": Recipe.objects.all(),  # für Dropdown
+        "recipes": Recipe.objects.all(),
     }
     return render(request, "recipes/weekly_plan.html", context)
-
