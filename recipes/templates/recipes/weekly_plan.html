@@ -17,8 +17,18 @@
             <div class="card">
 
                 <!-- Tages-Header -->
-                <div class="card-header bg-primary text-white">
-                    {{ day }}
+                <div class="card-header bg-primary text-white d-flex align-items-center">
+                    <span>{{ day }}</span>
+                    <button
+                    class="btn btn-sm btn-outline-light ms-auto toggle-btn"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#collapseTwo{{day}}"
+                    aria-expanded="false"
+                    >
+                        <i class="bi bi-plus plus-icon"></i>
+                        <i class="bi bi-dash minus-icon"></i>
+                    </button>
+
                 </div>
 
                 <!-- Einträge -->
@@ -29,9 +39,7 @@
                             <div class="accordion-item">
                                 <h2 class="accordion-header">
                                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne{{ entry.id }}" aria-expanded="false" aria-controls="collapseOne{{ entry.id }}">
-                                        <a href="{{ entry.recipe.get_absolute_url }}">
-                                                {{ entry.recipe.title }}
-                                            </a>
+                                            {{ entry.recipe.title }}
                                     </button>
                                 </h2>
                                 <div id="collapseOne{{ entry.id }}" class="accordion-collapse collapse" data-bs-parent="#accordion{{ entry.id }}">
@@ -60,28 +68,33 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
                         </li>
                     {% empty %}
                         <li class="list-group-item text-muted empty-entry">Keine Rezepte</li>
                     {% endfor %}
                 </ul>
-                <div class="card">
-                    <div class="card-body">
-                        <form method="GET" action="{% url 'recipes:weekly_plan' %}" class="row g-2 align-items-center">
-                            <input type="hidden" name="action" value="add">
-                            <input type="hidden" name="day" value="{{ day }}">
-                            
-                            <div class="col-10">
-                                <select name="recipe_id" placeholder="Rezept suchen..." autocomplete="off" required>
-                                    <option value=""></option> {% for recipe in recipes %}
-                                        <option value="{{ recipe.id }}">{{ recipe.title }}</option>
-                                    {% endfor %}
-                                </select>
+                <div id="collapseTwo{{day}}" class="accordion-collapse collapse" data-bs-parent="#accordion{{day}}">
+                    <div class="accordion-body">
+                        <div class="card">
+                            <div class="card-body">
+                                <form method="GET" action="{% url 'recipes:weekly_plan' %}" class="row g-2 align-items-center">
+                                    <input type="hidden" name="action" value="add">
+                                    <input type="hidden" name="day" value="{{ day }}">
+                                    
+                                    <div class="col-10">
+                                        <select name="recipe_id" placeholder="Rezept suchen..." autocomplete="off" required>
+                                            <option value=""></option> {% for recipe in recipes %}
+                                                <option value="{{ recipe.id }}">{{ recipe.title }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-2">
+                                        <button type="submit" class="btn btn-outline-primary"><i class="bi bi-plus-lg"></i></button>
+                                    </div>
+                                </form>
                             </div>
-                            <div class="col-2">
-                                <button type="submit" class="btn btn-outline-primary"><i class="bi bi-plus-lg"></i></button>
-                            </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>

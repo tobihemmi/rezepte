@@ -41,7 +41,17 @@ li a {
     min-height: 31px;
     font-size: 0.875rem;
 }
-
 .ts-dropdown {
     font-size: 0.875rem;
+}
+.minus-icon {
+  display: none;
+}
+
+.toggle-btn[aria-expanded="true"] .plus-icon {
+  display: none;
+}
+
+.toggle-btn[aria-expanded="true"] .minus-icon {
+  display: inline;
 }

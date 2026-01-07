@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse_lazy, reverse
 from django.views import generic, View
 from django.views.generic import CreateView, DeleteView, TemplateView
-from django.utils import timezone
+from datetime import date
 import random
 
 from .models import Recipe, Label, WeeklyPlan, WeeklyPlanEntry
@@ -221,7 +221,7 @@ class RandomRecipeView(TemplateView):
         return context
     
 def weekly_plan_view(request):
-    week_start = timezone.now().date()
+    week_start = date(2000, 1, 1)
     plan, _ = WeeklyPlan.objects.get_or_create(week_start=week_start)
 
     # GET-Parameter kopieren, um sie beim Redirect weiterzugeben
