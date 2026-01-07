@@ -55,3 +55,16 @@ li a {
 .toggle-btn[aria-expanded="true"] .minus-icon {
   display: inline;
 }
+.small-accordion .accordion-button {
+  padding: 0.4rem 0.6rem;
+  font-size: 0.9rem;
+}
+
+.small-accordion .accordion-button::after {
+  display: none;
+}
+
+.small-accordion .accordion-item {
+  border: none;
+  border-bottom: 1px solid #dee2e6;
+}
