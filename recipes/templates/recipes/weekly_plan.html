@@ -58,7 +58,7 @@
                                     class="accordion-collapse collapse"
                                     data-bs-parent="#accordion{{ entry.id }}"
                                 >
-                                    <div class="accordion-body py-2">
+                                    <div class="accordion-body py-2 px-0">
                                         <div class="d-flex gap-2 flex-wrap">
                                             <a
                                                 class="btn btn-sm btn-outline-primary"
@@ -69,7 +69,7 @@
 
                                             <div class="dropdown">
                                                 <button
-                                                    class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                                                    class="btn btn-sm btn-outline-secondary"
                                                     type="button"
                                                     id="dropdownMenu{{ entry.id }}"
                                                     data-bs-toggle="dropdown"
@@ -108,7 +108,7 @@
                         </div>
                         </li>
                     {% empty %}
-                        <li class="list-group-item text-muted empty-entry">Keine Rezepte</li>
+                        <li class="list-group-item text-muted empty-entry"></li>
                     {% endfor %}
                 </ul>
                 <div id="collapseTwo{{day}}" class="accordion-collapse collapse" data-bs-parent="#accordion{{day}}">
