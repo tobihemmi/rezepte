@@ -103,6 +103,23 @@
                                             </a>
                                         </div>
                                     </div>
+                                    <!-- {% if entry.comment %}
+                                        <p><em>{{ entry.comment }}</em></p>
+                                    {% endif %} -->
+                                    <form method="get" class="d-flex flex-column gap-2 mt-2">
+                                        <input type="hidden" name="action" value="comment">
+                                        <input type="hidden" name="entry_id" value="{{ entry.id }}">
+
+                                        <textarea
+                                            name="comment"
+                                            class="form-control form-control-sm"
+                                            rows="2"
+                                            placeholder="Kommentar hinzufügen...">{{ entry.comment }}</textarea>
+
+                                        <button type="submit" class="btn btn-sm btn-outline-success align-self-end">
+                                            Speichern
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                         </div>

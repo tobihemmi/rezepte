@@ -122,6 +122,7 @@ class WeeklyPlanEntry(models.Model):
     plan = models.ForeignKey(WeeklyPlan, related_name="entries", on_delete=models.CASCADE)
     day = models.CharField(max_length=10, choices=DAY_CHOICES)
     recipe = models.ForeignKey('Recipe', on_delete=models.CASCADE)
+    comment = models.TextField(blank=True)
 
     class Meta:
         ordering = ['day', 'id']  # damit die Einträge in Tagesreihenfolge angezeigt werden
