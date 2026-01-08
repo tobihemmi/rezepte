@@ -5,7 +5,7 @@
 
     <!-- Überschrift + Filter Toggle -->
     <div class="d-flex justify-content-between align-items-center mb-1">
-        <h4 class=>Rezeptliste</h4>
+        <h4>Rezeptliste</h4>
 
          <p class="text-muted mb-1">
         {% if result_count == 1 %}
@@ -26,17 +26,12 @@
         >
             <i class="bi bi-sliders me-2 transition-icon"></i>
             Filter
-            {% if request.GET %}
-                <span class="badge bg-primary ms-2">Aktiv</span>
-            {% endif %}
+            {% if request.GET %}<span class="badge bg-primary ms-2">Aktiv</span>{% endif %}
         </button>
     </div>
 
     <!-- Collapse-Bereich für Filter -->
-    <div
-      id="filterCollapse"
-      class="collapse {% if request.GET %}show{% endif %} mb-4"
-    >
+    <div id="filterCollapse" class="collapse {% if request.GET %}show{% endif %} mb-4">
         <form method="get" action="">
             <div class="row g-1 align-items-end">
 
@@ -51,30 +46,31 @@
                         value="{{ request.GET.q }}"
                     >
                 </div>
-            <div class="row g-2 align-items-end">
-                 <!-- Gesamtdauer -->
-                <div class="col-12 col-md-4">
-                    <label class="form-label">Gesamtdauer</label>
-                    <input
-                        class="form-control"
-                        type="number"
-                        name="max_duration"
-                        placeholder="min"
-                        value="{{ request.GET.max_duration }}"
-                    >
+
+                <div class="row g-2 align-items-end">
+                    <!-- Gesamtdauer -->
+                    <div class="col-12 col-md-4">
+                        <label class="form-label">Gesamtdauer</label>
+                        <input
+                            class="form-control"
+                            type="number"
+                            name="max_duration"
+                            placeholder="min"
+                            value="{{ request.GET.max_duration }}"
+                        >
+                    </div>
+                    <!-- Arbeitsdauer -->
+                    <div class="col-12 col-md-4">
+                        <label class="form-label">Arbeitsdauer</label>
+                        <input
+                            class="form-control"
+                            type="number"
+                            name="max_working_duration"
+                            placeholder="min"
+                            value="{{ request.GET.max_working_duration }}"
+                        >
+                    </div>
                 </div>
-                <!-- Arbeitsdauer -->
-                <div class="col-12 col-md-4">
-                    <label class="form-label">Arbeitsdauer</label>
-                    <input
-                        class="form-control"
-                        type="number"
-                        name="max_working_duration"
-                        placeholder="min"
-                        value="{{ request.GET.max_working_duration }}"
-                    >
-                </div>
-            </div>
                
                 <!-- Kategorie-Filter -->
                 <div class="col-12 mt-3">
@@ -125,7 +121,7 @@
                     <button class="btn btn-primary flex-fill" type="submit">
                         <i class="bi bi-funnel me-1"></i> Filtern
                     </button>
-                    <a href="{{ request.path }}" class="btn btn-success flex-fill">
+                    <a href="{% url 'recipes:index' %}" class="btn btn-success flex-fill">
                         <i class="bi bi-arrow-counterclockwise me-1"></i> Zurücksetzen
                     </a>
                     <a href="{% url 'recipes:random' %}?{{ request.GET.urlencode }}" class="btn btn-secondary flex-fill">
@@ -146,25 +142,30 @@
                 <option value="duration" {% if request.GET.sort == "duration" %}selected{% endif %}>
                     Gesamtdauer
                 </option>
+                <option value="cooked" {% if request.GET.sort == "cooked" %}selected{% endif %}>
+                    Häufig gekocht
+                </option>
             </select>
         </div>
     </div>
 
     <hr>
 
-
-    <!-- Rezeptliste -->
+    <!-- Rezeptliste -->       
     <ul class="list-group">
         {% for recipe in latest_recipe_list %}
             <li class="list-group-item d-flex justify-content-between align-items-center">
-                <a href="{% url 'recipes:detail' recipe.slug %}">
-                    {{ recipe.title }}
-                </a>
-                {% if recipe.duration_minutes %}
-                    <span class="badge bg-secondary">
-                        {{ recipe.duration_minutes }} Min
-                    </span>
-                {% endif %}
+                <div>
+                    <a href="{% url 'recipes:detail' recipe.slug %}?{{ request.GET.urlencode }}">
+                        {{ recipe.title }}
+                    </a>
+                    {% if recipe.duration_minutes %}
+                        <small class="text-muted">• {{ recipe.duration_minutes }} Min</small>
+                    {% endif %}
+                </div>
+                <div>
+                    <span class="badge bg-success rounded-pill">🍳 {{ recipe.cooked_count }}</span>
+                </div>
             </li>
         {% empty %}
             <li class="list-group-item text-muted">

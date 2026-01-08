@@ -1,15 +1,16 @@
-from django.db.models import F
-from django.db.models import Q
+from django.db.models import F, Q, Case, When, Value, IntegerField
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render, redirect
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.views import generic, View
 from django.views.generic import CreateView, DeleteView, TemplateView
+from datetime import date
 import random
 
-from .models import Recipe, Label
+from .models import Recipe, Label, WeeklyPlan, WeeklyPlanEntry
 from .forms import RecipeForm
 
+DAYS = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag']
 
 class RecipeCreateView(CreateView):
     model = Recipe
@@ -98,6 +99,8 @@ class IndexView(generic.ListView):
         sort_param = self.request.GET.get("sort", "title")  # Default = Alphabet
         if sort_param == "duration":
             qs = qs.order_by("duration_minutes")
+        elif sort_param =="cooked":
+            qs = qs.order_by("-cooked_count") #meistgekocht zuerst
         else:
             qs = qs.order_by("title")
 
@@ -121,58 +124,86 @@ class IndexView(generic.ListView):
 class DetailView(generic.DetailView):
     model = Recipe
     template_name = "recipes/recipe_detail.html"
+    slug_field = "slug"
+    slug_url_kwarg = "slug"
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if "cooked" in request.POST:
+            self.object.cooked_count = F("cooked_count") + 1
+            self.object.save(update_fields=["cooked_count"])
+        elif "undo_cooked" in request.POST:
+            self.object.cooked_count = Case(
+                When(cooked_count__gt=0, then=F("cooked_count") - 1),
+                default=Value(0),
+                output_field=IntegerField(),
+            )
+            self.object.save(update_fields=["cooked_count"])
+        return redirect(self.object.get_absolute_url())
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         recipe = self.object
 
-        # 🔢 gewünschte Portionen aus URL
+        # Basisportionen
+        base_servings = recipe.servings or 1
+
+        # User-angepasste Portionen via GET oder Standard
         try:
-            target_servings = int(self.request.GET.get("servings", recipe.servings))
-            if target_servings < 1:
-                target_servings = recipe.servings
+            current_servings = int(self.request.GET.get("servings", base_servings))
+            if current_servings < 1:
+                current_servings = base_servings
         except (TypeError, ValueError):
-            target_servings = recipe.servings
+            current_servings = base_servings
 
-        factor = target_servings / recipe.servings
+        try:
+            ing_list = [line.strip() for line in recipe.ingredients.splitlines() if line.strip()]
+        except BaseException:
+            ing_list = []
+        try:
+            st_list = [line.strip() for line in recipe.steps.splitlines() if line.strip()]
+        except BaseException:
+            st_list = []
 
-        ingredients_list = []
+        context.update({
+            "recipe": recipe,
+            "base_servings": base_servings,
+            "current_servings": current_servings,
+            "ingredients_list": ing_list,
+            "steps_list": st_list,
+            "days": DAYS,
+        })
+        return context
 
-        for line in recipe.ingredients.splitlines():
-            line = line.strip()
-            if not line:
-                continue
 
-            parts = line.split(" ", 2)
+class RecipeCookView(generic.DetailView):
+    model = Recipe
+    template_name = "recipes/recipe_cook.html"
+    slug_field = "slug"
+    slug_url_kwarg = "slug"
 
-            # Erwartetes Format: "MENGE EINHEIT ZUTAT"
-            try:
-                amount = float(parts[0].replace(",", "."))
-                new_amount = round(amount * factor, 2)
-                ingredients_list.append(
-                    f"{new_amount:g} {' '.join(parts[1:])}"
-                )
-            except (ValueError, IndexError):
-                # z.B. "Salz nach Geschmack"
-                ingredients_list.append(line)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        recipe = self.object
 
-        # Zutaten aufsplitten
-        context["ingredients_list"] = [
-            line.strip()
-            for line in self.object.ingredients.splitlines()
-            if line.strip()
-        ]
-        
-        # Schritte aufsplitten
-        context["steps_list"] = [
-            line.strip()
-            for line in self.object.steps.splitlines()
-            if line.strip()
-        ]
+        base_servings = recipe.servings or 1
 
-        context["current_servings"] = target_servings
-        context["base_servings"] = recipe.servings
+        # Gewünschte Portionen aus URL
+        try:
+            current_servings = int(self.request.GET.get("servings", base_servings))
+            if current_servings < 1:
+                current_servings = base_servings
+        except (TypeError, ValueError):
+            current_servings = base_servings
 
+        # Zutaten unverändert übergeben → JS skaliert
+        context.update({
+            "recipe": recipe,
+            "base_servings": base_servings,
+            "current_servings": current_servings,
+            "ingredients_list": [line.strip() for line in recipe.ingredients.splitlines() if line.strip()],
+            "steps_list": [line.strip() for line in recipe.steps.splitlines() if line.strip()],
+        })
         return context
 
 
@@ -188,3 +219,70 @@ class RandomRecipeView(TemplateView):
 
         context["recipe"] = random.choice(list(qs)) if qs.exists() else None
         return context
+    
+def weekly_plan_view(request):
+    week_start = date(2000, 1, 1)
+    plan, _ = WeeklyPlan.objects.get_or_create(week_start=week_start)
+
+    # GET-Parameter kopieren, um sie beim Redirect weiterzugeben
+    params = request.GET.copy()
+
+    action = params.get("action")
+    recipe_id = params.get("recipe_id")
+    day = params.get("day")
+
+    if action == "add" and recipe_id and day in DAYS:
+        recipe = get_object_or_404(Recipe, id=recipe_id)
+        WeeklyPlanEntry.objects.create(plan=plan, day=day, recipe=recipe)
+
+        # Entferne Aktions-Parameter, damit die URL sauber bleibt
+        for key in ["recipe_id", "action", "day", "entry_id"]:
+            params.pop(key, None)
+
+        return redirect(f"{reverse('recipes:weekly_plan')}?{params.urlencode()}")
+
+    elif action == "move":
+        entry_id = params.get("entry_id")
+        new_day = params.get("day")
+        if entry_id and new_day in DAYS:
+            entry = get_object_or_404(WeeklyPlanEntry, id=entry_id)
+            entry.day = new_day
+            entry.save()
+
+            # Filter behalten
+            for key in ["action", "entry_id", "day", "recipe_id"]:
+                params.pop(key, None)
+
+            return redirect(f"{reverse('recipes:weekly_plan')}?{params.urlencode()}")
+
+    elif action == "remove":
+        entry_id = params.get("entry_id")
+        if entry_id:
+            entry = get_object_or_404(WeeklyPlanEntry, id=entry_id)
+            entry.delete()
+
+            # Filter behalten
+            for key in ["action", "entry_id", "day", "recipe_id"]:
+                params.pop(key, None)
+
+            return redirect(f"{reverse('recipes:weekly_plan')}?{params.urlencode()}")
+    elif action == "clear":
+        # Alle Einträge des aktuellen Wochenplans löschen
+        plan.entries.all().delete()
+
+        # Filter behalten
+        for key in ["action", "recipe_id", "day", "entry_id"]:
+            params.pop(key, None)
+
+        return redirect(f"{reverse('recipes:weekly_plan')}?{params.urlencode()}")
+
+    # Tagesweise Einträge als Liste von Tupeln (Tag, Einträge)
+    day_entries_list = [(day_name, plan.entries.filter(day=day_name)) for day_name in DAYS]
+
+    context = {
+        "plan": plan,
+        "day_entries_list": day_entries_list,
+        "recipes": Recipe.objects.all(),
+        "days": DAYS,  # wichtig für das Dropdown in der Vorlage
+    }
+    return render(request, "recipes/weekly_plan.html", context)

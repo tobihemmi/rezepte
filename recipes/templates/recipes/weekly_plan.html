@@ -1,0 +1,159 @@
+{% extends "recipes/base.html" %}
+
+{% block title %}
+<title>Wochenplan</title>
+{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Wochenplan</h3>
+        <a href="?action=clear" class="btn btn-sm btn-outline-danger" title="Alle Einträge löschen">Alle löschen</a>
+    </div>
+
+    <div class="row g-3">
+        {% for day, entries in day_entries_list %}
+        <div class="col-md-4 col-sm-6">
+            <div class="card">
+
+                <!-- Tages-Header -->
+                <div class="card-header bg-primary text-white d-flex align-items-center">
+                    <span>{{ day }}</span>
+                    <button
+                    class="btn btn-sm btn-outline-light ms-auto toggle-btn"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#collapseTwo{{day}}"
+                    aria-expanded="false"
+                    >
+                        <i class="bi bi-plus plus-icon"></i>
+                        <i class="bi bi-dash minus-icon"></i>
+                    </button>
+
+                </div>
+
+                <!-- Einträge -->
+                <ul class="list-group list-group-flush day-list" data-day="{{ day }}">
+                    {% for entry in entries %}
+                    <li class="list-group-item text-muted empty-entry">
+                        <div class="accordion small-accordion" id="accordion{{ entry.id }}">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button
+                                        class="accordion-button collapsed d-flex align-items-center"
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#collapseOne{{ entry.id }}"
+                                        aria-expanded="false"
+                                        aria-controls="collapseOne{{ entry.id }}"
+                                    >
+                                        <span class="flex-grow-1">
+                                            {{ entry.recipe.title }}
+                                        </span>
+                                        <i class="bi bi-chevron-down small ms-2"></i>
+                                    </button>
+                                </h2>
+
+                                <div
+                                    id="collapseOne{{ entry.id }}"
+                                    class="accordion-collapse collapse"
+                                    data-bs-parent="#accordion{{ entry.id }}"
+                                >
+                                    <div class="accordion-body py-2">
+                                        <div class="d-flex gap-2 flex-wrap">
+                                            <a
+                                                class="btn btn-sm btn-outline-primary"
+                                                href="{{ entry.recipe.get_absolute_url }}"
+                                            >
+                                                Öffnen
+                                            </a>
+
+                                            <div class="dropdown">
+                                                <button
+                                                    class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                                                    type="button"
+                                                    id="dropdownMenu{{ entry.id }}"
+                                                    data-bs-toggle="dropdown"
+                                                    aria-expanded="false"
+                                                >
+                                                    Verschieben
+                                                </button>
+                                                <ul
+                                                    class="dropdown-menu"
+                                                    aria-labelledby="dropdownMenu{{ entry.id }}"
+                                                >
+                                                    {% for target_day in days %}
+                                                        <li>
+                                                            <a
+                                                                class="dropdown-item"
+                                                                href="?action=move&entry_id={{ entry.id }}&day={{ target_day }}"
+                                                            >
+                                                                {{ target_day }}
+                                                            </a>
+                                                        </li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+
+                                            <a
+                                                href="?action=remove&entry_id={{ entry.id }}"
+                                                class="btn btn-sm btn-outline-danger"
+                                                title="Entfernen"
+                                            >
+                                                Löschen
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        </li>
+                    {% empty %}
+                        <li class="list-group-item text-muted empty-entry">Keine Rezepte</li>
+                    {% endfor %}
+                </ul>
+                <div id="collapseTwo{{day}}" class="accordion-collapse collapse" data-bs-parent="#accordion{{day}}">
+                    <div class="accordion-body">
+                        <div class="card">
+                            <div class="card-body">
+                                <form method="GET" action="{% url 'recipes:weekly_plan' %}" class="row g-2 align-items-center">
+                                    <input type="hidden" name="action" value="add">
+                                    <input type="hidden" name="day" value="{{ day }}">
+                                    
+                                    <div class="col-10">
+                                        <select name="recipe_id" placeholder="Rezept suchen..." autocomplete="off" required>
+                                            <option value=""></option> {% for recipe in recipes %}
+                                                <option value="{{ recipe.id }}">{{ recipe.title }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-2">
+                                        <button type="submit" class="btn btn-outline-primary"><i class="bi bi-plus-lg"></i></button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+<script>
+    document.querySelectorAll('select[name="recipe_id"]').forEach((el) => {
+        new TomSelect(el, {
+            create: false,
+            sortField: { field: "text", direction: "asc" },
+            // Diese Zeile sorgt dafür, dass der Placeholder aus dem HTML-Attribut übernommen wird
+            placeholder: el.getAttribute('placeholder') || "Suchen...", 
+            allowEmptyOption: true,
+            // Verhindert, dass das erste Rezept automatisch ausgewählt wird
+            items: [], 
+        });
+    });
+</script>
+
+{% endblock %}
+

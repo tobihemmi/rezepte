@@ -1,0 +1,147 @@
+{% extends 'recipes/base.html' %}
+
+{% block title %}
+<title>{{ recipe.title }} - Kochmodus</title>
+{% endblock %}
+
+{% block content %}
+<!-- Kochmodus Container direkt mit Hintergrund -->
+<div class="bg-lightblue py-3">
+
+    <div class="container">
+
+        <!-- Badge am Titel -->
+        <div class="d-flex align-items-center mb-3">
+            <h3 class="flex-grow-1 mb-0">{{ recipe.title }}</h3>
+            <span class="badge bg-info text-white ms-2">Kochmodus 🍳</span>
+        </div>
+
+        <!-- Bild -->
+        {% if recipe.image %}
+        <div class="recipe-image-wrapper text-center mb-4">
+            <img src="{{ recipe.image.url }}" class="img-fluid rounded recipe-image" alt="{{ recipe.title }}">
+        </div>
+        {% endif %}
+
+        <!-- Dauer & Temperatur -->
+        {% if recipe.duration_minutes %}<p><strong>Gesamtdauer:</strong> {{ recipe.duration_minutes }} Minuten</p>{% endif %}
+        {% if recipe.working_time %}<p><strong>Arbeitsdauer:</strong> {{ recipe.working_time }} Minuten</p>{% endif %}
+        {% if recipe.temperature_celsius %}<p><strong>Temperatur:</strong> {{ recipe.temperature_celsius }} °C Ober-/Unterhitze</p>{% endif %}
+
+        <!-- Labels -->
+        {% if recipe.labels.all %}
+        <p><strong>Labels:</strong>
+            {% for label in recipe.labels.all %}
+                {% if label.label_type == "category" %}
+                    <span class="badge rounded-pill border text-primary">{{ label.name }}</span>
+                {% elif label.label_type == "event" %}
+                    <span class="badge rounded-pill border text-success">{{ label.name }}</span>
+                {% else %}
+                    <span class="badge rounded-pill border text-secondary">{{ label.name }}</span>
+                {% endif %}
+            {% endfor %}
+        </p>
+        {% endif %}
+
+        <!-- Portionsauswahl -->
+        <div class="mb-3">
+            <label class="form-label"><strong>Portionen:</strong></label>
+            <div class="input-group" style="max-width: 200px;">
+                <button class="btn btn-outline-secondary" id="minus-btn" type="button">−</button>
+                <input type="number" id="servings-input" class="form-control text-center" value="{{ current_servings }}" min="1">
+                <button class="btn btn-outline-secondary" id="plus-btn" type="button">+</button>
+            </div>
+            <small class="text-muted">Basisrezept für {{ base_servings }} Portionen</small>
+        </div>
+
+        <!-- Zutaten mit Checkboxen -->
+        {% if recipe.ingredients %}
+        <h5>Zutaten</h5>
+        <ul class="list-group mb-4" id="ingredients-list">
+            {% for ingredient in ingredients_list %}
+                <li class="list-group-item d-flex align-items-start ingredient-item" data-original="{{ ingredient }}">
+                    <input type="checkbox" class="form-check-input me-2 mt-1 ingredient-checkbox">
+                    <span>{{ ingredient }}</span>
+                </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+        <!-- Zubereitungsschritte mit Checkboxen -->
+        {% if recipe.steps %}
+        <h5>Zubereitungsschritte</h5>
+        <ul class="list-group">
+            {% for step in steps_list %}
+                <li class="list-group-item d-flex align-items-start">
+                    <input type="checkbox" class="form-check-input me-2 mt-1 step-checkbox">
+                    <span class="step-number me-2">{{ forloop.counter }}.</span>
+                    <span>{{ step }}</span>
+                </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const minusBtn = document.getElementById("minus-btn");
+    const plusBtn = document.getElementById("plus-btn");
+    const servingsInput = document.getElementById("servings-input");
+    const ingredientsList = document.querySelectorAll("#ingredients-list .ingredient-item");
+
+    const baseServings = parseFloat("{{ base_servings }}");
+
+    function updateIngredients() {
+        const currentServings = parseFloat(servingsInput.value) || baseServings;
+        const factor = currentServings / baseServings;
+
+        ingredientsList.forEach(item => {
+            const original = item.dataset.original.trim();
+            const match = original.match(/^([\d.,/]+)\s*(.*)$/);
+            if (match) {
+                let amountStr = match[1].replace(",", ".");
+                let rest = match[2];
+
+                let amount = parseFloat(amountStr);
+                if (isNaN(amount) && amountStr.includes("/")) {
+                    const parts = amountStr.split("/");
+                    if (parts.length === 2) amount = parseFloat(parts[0])/parseFloat(parts[1]);
+                }
+
+                item.querySelector("span").textContent = !isNaN(amount) ? (Math.round(amount * factor * 100)/100) + " " + rest : original;
+            } else {
+                item.querySelector("span").textContent = original;
+            }
+        });
+    }
+
+    minusBtn.addEventListener("click", function() {
+        let value = parseInt(servingsInput.value) || baseServings;
+        if (value > 1) {
+            servingsInput.value = value - 1;
+            updateIngredients();
+        }
+    });
+
+    plusBtn.addEventListener("click", function() {
+        let value = parseInt(servingsInput.value) || baseServings;
+        servingsInput.value = value + 1;
+        updateIngredients();
+    });
+
+    servingsInput.addEventListener("input", updateIngredients);
+
+    // Initiales Update
+    updateIngredients();
+});
+</script>
+
+<style>
+/* Hintergrund für den gesamten Kochmodus */
+.bg-lightblue {
+    background-color: #e6f2ff;
+}
+</style>
+{% endblock %}

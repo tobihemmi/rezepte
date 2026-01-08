@@ -35,3 +35,36 @@ li a {
 #filterToggleBtn[aria-expanded="true"] .transition-icon {
     transform: rotate(90deg);
 }
+/* Passt Tom Select an die Bootstrap 'sm' (small) Größe an */
+.ts-wrapper.form-control-sm .ts-control {
+    padding: 5px 10px;
+    min-height: 31px;
+    font-size: 0.875rem;
+}
+.ts-dropdown {
+    font-size: 0.875rem;
+}
+.minus-icon {
+  display: none;
+}
+
+.toggle-btn[aria-expanded="true"] .plus-icon {
+  display: none;
+}
+
+.toggle-btn[aria-expanded="true"] .minus-icon {
+  display: inline;
+}
+.small-accordion .accordion-button {
+  padding: 0.4rem 0.6rem;
+  font-size: 0.9rem;
+}
+
+.small-accordion .accordion-button::after {
+  display: none;
+}
+
+.small-accordion .accordion-item {
+  border: none;
+  border-bottom: 1px solid #dee2e6;
+}
