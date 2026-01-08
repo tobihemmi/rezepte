@@ -1,5 +1,5 @@
 from django import forms
-from .models import Recipe
+from .models import Recipe, WeeklyPlanEntry
 
 
 class RecipeForm(forms.ModelForm):
@@ -27,4 +27,12 @@ class RecipeForm(forms.ModelForm):
                 "placeholder": "Schritte durch Zeilenumbruch trennen"
             }),
             "labels": forms.CheckboxSelectMultiple(),
+        }
+
+class WeeklyPlanEntryCommentForm(forms.ModelForm):
+    class Meta:
+        model = WeeklyPlanEntry
+        fields = ["comment"]
+        widgets = {
+            "comment": forms.Textarea(attrs={"rows": 2, "placeholder": "Kommentar hinzufügen..."}),
         }

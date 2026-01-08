@@ -241,6 +241,19 @@ def weekly_plan_view(request):
 
         return redirect(f"{reverse('recipes:weekly_plan')}?{params.urlencode()}")
 
+    elif action == "comment":
+        entry_id = params.get("entry_id")
+        comment_text = params.get("comment", "").strip()
+        if entry_id:
+            entry = get_object_or_404(WeeklyPlanEntry, id=entry_id)
+            entry.comment = comment_text
+            entry.save()
+
+            for key in ["action", "entry_id", "comment"]:
+                params.pop(key, None)
+
+            return redirect(f"{reverse('recipes:weekly_plan')}?{params.urlencode()}")
+
     elif action == "move":
         entry_id = params.get("entry_id")
         new_day = params.get("day")
@@ -286,3 +299,5 @@ def weekly_plan_view(request):
         "days": DAYS,  # wichtig für das Dropdown in der Vorlage
     }
     return render(request, "recipes/weekly_plan.html", context)
+
+
