@@ -244,3 +244,77 @@ li a {
     background-color: #f8d7da;
     color: #a71d2a;
 }
+/* Wrapper Buttons über Bild */
+.recipe-hero {
+    position: relative;
+    overflow: hidden;
+}
+
+.recipe-buttons-overlay {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    gap: 0.5rem;
+    backdrop-filter: blur(10px); /* iOS-Blur */
+    background-color: rgba(255, 255, 255, 0.3); /* halbtransparent */
+    padding: 0.3rem 0.5rem;
+    border-radius: 9999px; /* runde Kapsel-Form */
+}
+
+/* iOS Buttons für Overlay */
+.recipe-buttons-overlay .btn-ios {
+    border: none; /* Rahmen im Overlay optional */
+    background-color: rgba(255, 255, 255, 0.7);
+    color: #007bff;
+    font-weight: 500;
+    padding: 0.4rem 0.6rem;
+    border-radius: 9999px;
+    transition: all 0.2s ease;
+}
+
+.recipe-buttons-overlay .btn-ios:hover {
+    background-color: rgba(255, 255, 255, 0.9);
+    transform: scale(1.05);
+}
+
+.recipe-buttons-overlay .btn-ios:active {
+    transform: scale(0.95);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+/* Secondary + Danger Farben */
+.recipe-buttons-overlay .btn-ios-secondary {
+    background-color: rgba(108, 117, 125, 0.7);
+    color: #fff;
+}
+
+.recipe-buttons-overlay .btn-ios-secondary:hover {
+    background-color: rgba(108, 117, 125, 0.9);
+}
+
+.recipe-buttons-overlay .btn-ios-danger {
+    background-color: rgba(220, 53, 69, 0.7);
+    color: #fff;
+}
+
+.recipe-buttons-overlay .btn-ios-danger:hover {
+    background-color: rgba(220, 53, 69, 0.9);
+}
+/* Einheitliche Größe wie andere iOS Buttons */
+.btn-ios, .btn-ios-secondary, .btn-ios-danger, .calendar-dropdown {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 0.8rem;
+    border-radius: 9999px; /* Kapsel */
+    font-weight: 500;
+    transition: all 0.2s ease;
+    box-shadow: none;
+
+}
+
+/* Dropdown Caret entfernen */
+.calendar-dropdown::after {
+    display: none;
+}

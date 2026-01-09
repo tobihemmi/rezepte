@@ -12,10 +12,53 @@
         <div class="d-flex align-items-center mb-3">
             <h4 class="flex-grow-1 mb-0">{{ recipe.title }}</h4>
         </div>
-        <div class="d-flex gap-2 mb-2">
+
+        <!-- Wenn ein externer Link vorhanden ist, zeige nur Titel und externen Link -->
+
+        {% if recipe.image %}
+        <div class="recipe-hero mb-4 position-relative">
+            <img src="{{ recipe.image.url }}" alt="{{ recipe.title }}" class="img-fluid rounded">
+
+            <!-- Buttons über dem Bild -->
+            
+            <div class="position-absolute top-0 start-0 w-100 d-flex gap-2 p-2">
+                {% if not recipe.external_link %}
+                <a href="{% url 'recipes:cook' recipe.slug %}?servings={{ current_servings }}" class="btn btn-ios me-auto">
+                    <i class="bi bi-play-fill"></i>
+                </a>
+                {% endif %}
+                <!-- Kalender Dropdown -->
+                <div class="dropdown d-inline">
+                    <button class="btn btn-ios calendar-dropdown" type="button" id="addToPlanDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-calendar-event"></i>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="addToPlanDropdown">
+                        {% for day in days %}
+                        <li>
+                            <a class="dropdown-item" href="{% url 'recipes:weekly_plan' %}?action=add&recipe_id={{ recipe.id }}&day={{ day }}{% if request.GET %}&{{ request.GET.urlencode }}{% endif %}">
+                                {{ day }}
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <a href="{% url 'recipes:update' recipe.slug %}" class="btn btn-ios-secondary">
+                    <i class="bi bi-pencil-square"></i>
+                </a>
+                <a href="{% url 'recipes:delete' recipe.slug %}" class="btn btn-ios-danger">
+                    <i class="bi bi-trash-fill"></i>
+                </a>
+            </div>
+        </div>
+
+        {% else %}
+         <div class="d-flex gap-2 mb-2">
+            {% if not recipe.external_link %}
             <a href="{% url 'recipes:cook' recipe.slug %}?servings={{ current_servings }}" class="btn btn-ios me-auto">
                 <i class="bi bi-play-fill"></i>
             </a>
+            {% endif %}
 
             <div class="dropdown d-inline">
                 <button class="btn btn-ios" type="button" id="addToPlanDropdown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -39,22 +82,24 @@
                 <i class="bi bi-trash-fill"></i>
             </a>
         </div>
+        {% endif %}
 
-
-        <!-- Wenn ein externer Link vorhanden ist, zeige nur Titel und externen Link -->
         {% if recipe.external_link %}
         <div class="mb-3">
-            <a href="{{recipe.external_link}}" class="btn btn-outline-primary btn-sm mb-3" target="_blank">
+            <a href="{{recipe.external_link}}" class="btn btn-outline-primary btn-sm mb-3 text-truncate d-block" target="_blank" style="max-width: 100%;">
                 Externer Link: {{ recipe.external_link }}
             </a>
         </div>
+
         {% else %}
+
+
             <!-- Bild -->
-            {% if recipe.image %}
+            <!-- {% if recipe.image %}
             <div class="recipe-hero mb-4">
                 <img src="{{ recipe.image.url }}" alt="{{ recipe.title }}">
             </div>
-            {% endif %}
+            {% endif %} -->
 
             <!-- Labels -->
              {% if recipe.labels.all %}
