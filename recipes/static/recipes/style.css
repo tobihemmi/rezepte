@@ -60,17 +60,15 @@ li a {
 ------------------------- */
 .card-img-top { object-fit: cover; height: 180px; }
 
-.card,
 .recipe-card {
     border-radius: 1rem;
-    overflow: hidden;
+    overflow: visible;
     border: none;
     background: #fff;
     cursor: pointer;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
     transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
-.card:hover,
 .recipe-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
@@ -80,8 +78,7 @@ li a {
    Hero Image + Overlay Buttons
 ------------------------- */
 .recipe-hero {
-    position: relative;
-    overflow: hidden;
+    overflow: visible;
 }
 .recipe-hero img {
     width: 100%;
@@ -200,3 +197,27 @@ li a {
 
 /* Dropdown Caret entfernen */
 .calendar-dropdown::after { display: none; }
+
+/* Kleine iOS-Pille */
+.btn-ios-sm,
+.btn-ios-sm-secondary,
+.btn-ios-sm-danger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem 0.5rem; /* kleineres Padding */
+    border-radius: 9999px; /* runde Kapsel */
+    font-size: 0.875rem;   /* kleinere Schrift */
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-ios-sm { border: 1px solid #007bff; background-color: #fff; color: #007bff; }
+.btn-ios-sm:hover { background-color: #f0f8ff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+.btn-ios-sm:active { transform: scale(0.95); box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+
+.btn-ios-sm-secondary { border: 1px solid #333; background-color: #fff; color: #333; }
+.btn-ios-secondary:hover { background: rgba(108, 117, 125, 0.25); }
+
+.btn-ios-sm-danger { border: 1px solid #dc3545; background-color: #fff; color: #dc3545; }
+.btn-ios-sm-danger:hover { background-color: #f8d7da; color: #a71d2a; }

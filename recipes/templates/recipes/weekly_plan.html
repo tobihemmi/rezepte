@@ -8,7 +8,7 @@
 <div class="container my-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h3>Wochenplan</h3>
-        <a href="?action=clear" class="btn btn-sm btn-outline-danger" title="Alle Einträge löschen">Alle löschen</a>
+        <a href="?action=clear" class="btn btn-ios-sm-danger" title="Alle Einträge löschen">Alle löschen</a>
     </div>
 
     <div class="row g-3">
@@ -61,7 +61,7 @@
                                     <div class="accordion-body py-2 px-0">
                                         <div class="d-flex gap-2 flex-wrap">
                                             <a
-                                                class="btn btn-sm btn-outline-primary"
+                                                class="btn btn-ios-sm btn-outline-primary"
                                                 href="{{ entry.recipe.get_absolute_url }}"
                                             >
                                                 Öffnen
@@ -69,7 +69,7 @@
 
                                             <div class="dropdown">
                                                 <button
-                                                    class="btn btn-sm btn-outline-secondary"
+                                                    class="btn btn-ios-sm-secondary btn-outline-secondary"
                                                     type="button"
                                                     id="dropdownMenu{{ entry.id }}"
                                                     data-bs-toggle="dropdown"
@@ -96,7 +96,7 @@
 
                                             <a
                                                 href="?action=remove&entry_id={{ entry.id }}"
-                                                class="btn btn-sm btn-outline-danger"
+                                                class="btn btn-sm btn-ios-sm-danger "
                                                 title="Entfernen"
                                             >
                                                 Löschen
@@ -116,7 +116,7 @@
                                             rows="3"
                                             placeholder="Kommentar hinzufügen...">{{ entry.comment }}</textarea>
 
-                                        <button type="submit" class="btn btn-sm btn-outline-success align-self-end">
+                                        <button type="submit" class="btn btn-ios-sm align-self-end">
                                             Speichern
                                         </button>
                                     </form>
