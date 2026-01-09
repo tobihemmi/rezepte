@@ -1,1 +1,4 @@
-Backup Konzept
+Rezeptliste als Karten
+Suchfenster immer aktiv, nur Filter aufklappbar
+Zufallsrezept direkt auf Wochenplan setzen
+Sortierung bei gekocht von unten nach oben

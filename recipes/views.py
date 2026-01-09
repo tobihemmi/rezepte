@@ -218,6 +218,7 @@ class RandomRecipeView(TemplateView):
         qs = index_view.get_queryset()
 
         context["recipe"] = random.choice(list(qs)) if qs.exists() else None
+        context["days"] = DAYS
         return context
     
 def weekly_plan_view(request):
