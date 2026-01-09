@@ -13,38 +13,33 @@
             <h4 class="flex-grow-1 mb-0">{{ recipe.title }}</h4>
         </div>
         <div class="d-flex gap-2 mb-2">
-            <a
-                href="{% url 'recipes:cook' recipe.slug %}?servings={{ current_servings }}"
-                class="btn btn-outline-primary me-auto"
-            >
+            <a href="{% url 'recipes:cook' recipe.slug %}?servings={{ current_servings }}" class="btn btn-ios me-auto">
                 <i class="bi bi-play-fill"></i>
             </a>
-            <!-- Wochenplan hinzufügen Dropdown -->
+
             <div class="dropdown d-inline">
-                <button class="btn btn-outline-primary" type="button" id="addToPlanDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <button class="btn btn-ios" type="button" id="addToPlanDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="bi bi-calendar-event"></i>
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="addToPlanDropdown">
                     {% for day in days %}
                         <li>
-                            <a class="dropdown-item"
-                            href="{% url 'recipes:weekly_plan' %}?action=add&recipe_id={{ recipe.id }}&day={{ day }}{% if request.GET %}&{{ request.GET.urlencode }}{% endif %}">
-                            {{ day }}
+                            <a class="dropdown-item" href="{% url 'recipes:weekly_plan' %}?action=add&recipe_id={{ recipe.id }}&day={{ day }}{% if request.GET %}&{{ request.GET.urlencode }}{% endif %}">
+                                {{ day }}
                             </a>
                         </li>
                     {% endfor %}
                 </ul>
             </div>
-            <!-- <a href="https://todoist.com/add?content={{ '['|add:recipe.title|add:']('|add:request.build_absolute_uri|add:') #WG /Essensplanung'|urlencode }}" target="_blank" class="btn btn-primary">
-                <i class="bi bi-box-arrow-up"></i>
-            </a> -->
-            <a href="{% url 'recipes:update' recipe.slug %}" class="btn btn-outline-success">
+
+            <a href="{% url 'recipes:update' recipe.slug %}" class="btn btn-ios-secondary">
                 <i class="bi bi-pencil-square"></i>
             </a>
-            <a href="{% url 'recipes:delete' recipe.slug %}" class="btn btn-outline-danger">
+            <a href="{% url 'recipes:delete' recipe.slug %}" class="btn btn-ios-danger">
                 <i class="bi bi-trash-fill"></i>
             </a>
         </div>
+
 
         <!-- Wenn ein externer Link vorhanden ist, zeige nur Titel und externen Link -->
         {% if recipe.external_link %}
@@ -118,7 +113,7 @@
 
                 <span class="text-muted">🍳 {{ recipe.cooked_count }}×</span>
             </div>
-            
+
             <div class="mb-3">
                 <!-- Label über dem Stepper -->
                 <label class="form-label fw-semibold d-block mb-2">Portionen</label>

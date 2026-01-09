@@ -97,38 +97,6 @@ li a {
     box-shadow:
         0 12px 32px rgba(0, 0, 0, 0.12);
 }
-.btn-ios {
-    border-radius: 999px; /* Pill */
-    padding: 0.4rem 0.9rem;
-    font-weight: 500;
-    border: none;
-
-    background: rgba(13, 110, 253, 0.9);
-    color: #fff;
-
-    box-shadow:
-        0 4px 12px rgba(13, 110, 253, 0.25);
-
-    transition: all 0.2s ease;
-}
-
-.btn-ios:hover {
-    background: rgba(13, 110, 253, 1);
-    transform: translateY(-1px);
-    box-shadow:
-        0 6px 16px rgba(13, 110, 253, 0.35);
-}
-
-.btn-ios-secondary {
-    border-radius: 999px; /* Pill */
-    background: rgba(108, 117, 125, 0.15);
-    color: #333;
-    box-shadow: none;
-}
-
-.btn-ios-secondary:hover {
-    background: rgba(108, 117, 125, 0.25);
-}
 .recipe-hero img {
     width: 100%;
     max-height: 320px;
@@ -189,4 +157,90 @@ li a {
 .section-title {
     font-weight: 600;
     margin-bottom: 0.75rem;
+}
+
+/* Optional: Icon zentrieren */
+.btn-ios i {
+    font-size: 1.1rem;
+}
+.btn-ios {
+    border-radius: 999px; /* Pill */
+    padding: 0.4rem 0.9rem;
+    font-weight: 500;
+    border: none;
+
+    background: rgba(13, 110, 253, 0.9);
+    color: #fff;
+
+    box-shadow:
+        0 4px 12px rgba(13, 110, 253, 0.25);
+
+    transition: all 0.2s ease;
+}
+
+.btn-ios:hover {
+    background: rgba(13, 110, 253, 1);
+    transform: translateY(-1px);
+    box-shadow:
+        0 6px 16px rgba(13, 110, 253, 0.35);
+}
+
+
+/* Basis iOS Button */
+.btn-ios {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 0.8rem;
+    border-radius: 9999px; /* Kapsel */
+    border: 1px solid #007bff;
+    background-color: #ffffff;
+    color: #007bff;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    box-shadow: none;
+}
+
+.btn-ios:hover {
+    background-color: #f0f8ff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.btn-ios:active {
+    transform: scale(0.95);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+.btn-ios-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 0.8rem;
+    border-radius: 9999px; /* Kapsel */
+    border: 1px solid #333;
+    background-color: #ffffff;
+    color: #333;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    box-shadow: none;
+}
+.btn-ios-secondary:hover {
+    background: rgba(108, 117, 125, 0.25);
+}
+.btn-ios-danger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 0.8rem;
+    border-radius: 9999px; /* Kapsel */
+    border: 1px solid #dc3545;
+    background-color: #ffffff;
+    color: #dc3545;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    box-shadow: none;
+
+}
+.btn-ios-danger:hover {
+    background-color: #f8d7da;
+    color: #a71d2a;
 }
