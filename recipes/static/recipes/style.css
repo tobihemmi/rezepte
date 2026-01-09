@@ -68,12 +68,21 @@ li a {
     cursor: pointer;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
     transition: transform 0.25s ease, box-shadow 0.25s ease;
+    min-height: 350px;
 }
 .recipe-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
 }
-
+.card-title {
+    display: -webkit-box;        /* Flexbox-artiger Container für clamp */
+    -webkit-box-orient: vertical; /* Vertikale Ausrichtung */
+    overflow: hidden;             /* alles darüber hinaus verstecken */
+    text-overflow: ellipsis;      /* "..." am Ende */
+    -webkit-line-clamp: 3;        /* maximale Zeilenanzahl */
+    line-height: 1.2em;           /* optional: Zeilenhöhe */
+    max-height: calc(1.2em * 3);  /* optional: Sicherheitsnetz */
+}
 /* -------------------------
    Hero Image + Overlay Buttons
 ------------------------- */
