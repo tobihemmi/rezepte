@@ -120,6 +120,7 @@ li a {
 }
 
 .btn-ios-secondary {
+    border-radius: 999px; /* Pill */
     background: rgba(108, 117, 125, 0.15);
     color: #333;
     box-shadow: none;
@@ -135,4 +136,35 @@ li a {
     border-radius: 20px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.12);
 }
+.info-tile {
+    background: #f8f9fa;
+    border-radius: 14px;
+    padding: 1rem;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
 
+.info-tile strong {
+    display: block;
+    font-size: 1.2rem;
+}
+.chip {
+    display: inline-block;
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    margin: 0.15rem;
+    background: #f1f3f5;
+}
+
+.chip-category { color: #0d6efd; }
+.chip-event { color: #198754; }
+.action-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    padding: 0.75rem 1rem;
+    border-radius: 16px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}

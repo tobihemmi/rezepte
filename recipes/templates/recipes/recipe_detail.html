@@ -61,29 +61,65 @@
             </div>
             {% endif %}
 
-
-            <!-- Dauer & Temperatur -->
-            {% if recipe.duration_minutes %}<p><strong>Gesamtdauer:</strong> {{ recipe.duration_minutes }} Minuten</p>{% endif %}
-            {% if recipe.working_time %}<p><strong>Arbeitsdauer:</strong> {{ recipe.working_time }} Minuten</p>{% endif %}
-            {% if recipe.temperature_celsius %}<p><strong>Temperatur:</strong> {{ recipe.temperature_celsius }} °C Ober-/Unterhitze</p>{% endif %}
-
             <!-- Labels -->
-            {% if recipe.labels.all %}
-            <p><strong>Labels:</strong>
+             {% if recipe.labels.all %}
+            <div class="mb-4">
                 {% for label in recipe.labels.all %}
-                    {% if label.label_type == "category" %}
-                        <span class="badge rounded-pill border text-primary">{{ label.name }}</span>
-                    {% elif label.label_type == "event" %}
-                        <span class="badge rounded-pill border text-success">{{ label.name }}</span>
-                    {% else %}
-                        <span class="badge rounded-pill border text-secondary">{{ label.name }}</span>
-                    {% endif %}
+                    <span class="chip chip-{{ label.label_type }}">
+                        {{ label.name }}
+                    </span>
                 {% endfor %}
-            </p>
+            </div>
             {% endif %}
 
+            <!-- Dauer & Temperatur -->
+            <div class="row g-3 mb-4">
+                {% if recipe.duration_minutes %}
+                <div class="col-6 col-md-4">
+                    <div class="info-tile">
+                        ⏱️ <strong>{{ recipe.duration_minutes }}</strong>
+                        <small>Min Gesamt</small>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if recipe.working_time %}
+                <div class="col-6 col-md-4">
+                    <div class="info-tile">
+                        ✋ <strong>{{ recipe.working_time }}</strong>
+                        <small>Min Arbeit</small>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if recipe.temperature_celsius %}
+                <div class="col-12 col-md-4">
+                    <div class="info-tile">
+                        🔥 <strong>{{ recipe.temperature_celsius }}°C</strong>
+                        <small>Ober-/Unterhitze</small>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
             <!-- 🍳 Koch-Counter -->
-            <div class="mb-3 p-2 border rounded d-flex flex-wrap align-items-center gap-2">
+             <div class="action-bar mb-4">
+                <form method="post" class="d-flex gap-2 mb-0">
+                    {% csrf_token %}
+                    <button type="submit" name="cooked" class="btn btn-ios btn-sm">
+                        🍳 Gekocht
+                    </button>
+                    {% if recipe.cooked_count > 0 %}
+                    <button type="submit" name="undo_cooked" class="btn btn-ios-secondary btn-sm">
+                        Rückgängig
+                    </button>
+                    {% endif %}
+                </form>
+
+                <span class="text-muted">🍳 {{ recipe.cooked_count }}×</span>
+            </div>
+
+            <!-- <div class="mb-3 p-2 border rounded d-flex flex-wrap align-items-center gap-2">
                 <form method="post" class="d-flex align-items-center gap-2 mb-0">
                     {% csrf_token %}
                     <button type="submit" name="cooked" class="btn btn-success btn-sm">Habe ich gekocht</button>
@@ -92,7 +128,7 @@
                     {% endif %}
                 </form>
                 <span class="text-muted ms-auto">🍳 {{ recipe.cooked_count }} mal gekocht</span>
-            </div>
+            </div> -->
 
             <!-- Portionsauswahl -->
             <div class="mb-3">
