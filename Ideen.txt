@@ -1,1 +1,3 @@
-Backup Konzept
+Rezeptliste als Karten
+Suchfenster immer aktiv, nur Filter aufklappbar
+Zufallsrezept direkt auf Wochenplan setzen

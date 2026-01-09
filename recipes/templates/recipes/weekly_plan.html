@@ -34,9 +34,9 @@
                 <!-- Einträge -->
                 <ul class="list-group list-group-flush day-list" data-day="{{ day }}">
                     {% for entry in entries %}
-                    <li class="list-group-item text-muted empty-entry">
-                        <div class="accordion small-accordion" id="accordion{{ entry.id }}">
-                            <div class="accordion-item">
+                    <li class="list-group-item text-muted empty-entry px-1">
+                        <div class="accordion small-accordion w-100" id="accordion{{ entry.id }}">
+                            <div class="accordion-item w-100">
                                 <h2 class="accordion-header">
                                     <button
                                         class="accordion-button collapsed d-flex align-items-center"
@@ -113,7 +113,7 @@
                                         <textarea
                                             name="comment"
                                             class="form-control form-control-sm"
-                                            rows="2"
+                                            rows="3"
                                             placeholder="Kommentar hinzufügen...">{{ entry.comment }}</textarea>
 
                                         <button type="submit" class="btn btn-sm btn-outline-success align-self-end">
@@ -125,7 +125,7 @@
                         </div>
                         </li>
                     {% empty %}
-                        <li class="list-group-item text-muted empty-entry"></li>
+                        <li class="list-group-item text-muted empty-entry"><span class="invisible">placeholder</span></li>
                     {% endfor %}
                 </ul>
                 <div id="collapseTwo{{day}}" class="accordion-collapse collapse" data-bs-parent="#accordion{{day}}">
