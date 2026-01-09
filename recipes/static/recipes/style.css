@@ -168,3 +168,25 @@ li a {
     border-radius: 16px;
     box-shadow: 0 6px 18px rgba(0,0,0,0.06);
 }
+.servings-stepper {
+    border-radius: 999px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.servings-stepper button,
+.servings-stepper input {
+    border: none;
+    background: #fff;
+    padding: 0.5rem 0.75rem;
+    text-align: center;
+    font-size: 1rem;
+}
+
+.servings-stepper input {
+    width: 50px;
+}
+.section-title {
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}

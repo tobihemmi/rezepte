@@ -118,45 +118,39 @@
 
                 <span class="text-muted">🍳 {{ recipe.cooked_count }}×</span>
             </div>
-
-            <!-- <div class="mb-3 p-2 border rounded d-flex flex-wrap align-items-center gap-2">
-                <form method="post" class="d-flex align-items-center gap-2 mb-0">
-                    {% csrf_token %}
-                    <button type="submit" name="cooked" class="btn btn-success btn-sm">Habe ich gekocht</button>
-                    {% if recipe.cooked_count > 0 %}
-                        <button type="submit" name="undo_cooked" class="btn btn-secondary btn-sm">Rückgängig</button>
-                    {% endif %}
-                </form>
-                <span class="text-muted ms-auto">🍳 {{ recipe.cooked_count }} mal gekocht</span>
-            </div> -->
-
-            <!-- Portionsauswahl -->
+            
             <div class="mb-3">
-                <label class="form-label"><strong>Portionen:</strong></label>
-                <div class="input-group" style="max-width: 125px;">
-                    <button class="btn btn-outline-secondary" id="minus-btn" type="button">−</button>
-                    <input type="number" id="servings-input" class="form-control text-center" value="{{ current_servings }}" min="1">
-                    <button class="btn btn-outline-secondary" id="plus-btn" type="button">+</button>
+                <!-- Label über dem Stepper -->
+                <label class="form-label fw-semibold d-block mb-2">Portionen</label>
+
+                <!-- Stepper Buttons + Input -->
+                <div class="servings-stepper d-inline-flex mb-2">
+                    <button id="minus-btn" type="button">−</button>
+                    <input type="number" id="servings-input" value="{{ current_servings }}" min="1">
+                    <button id="plus-btn" type="button">+</button>
                 </div>
-                <small class="text-muted">Basisrezept für {{ base_servings }} Portionen</small>
+
+                <!-- Hinweis unter Stepper -->
+                <small class="text-muted d-block">
+                    Basisrezept für {{ base_servings }} Portionen
+                </small>
             </div>
 
             <!-- Zutaten -->
-            {% if recipe.ingredients %}
-            <h3>Zutaten</h3>
-            <ul class="list-group list-group-flush" id="ingredients-list">
+             {% if recipe.ingredients %}
+            <h3 class="section-title">Zutaten</h3>
+            <ul class="list-group list-group-flush mb-4" id="ingredients-list">
                 {% for ingredient in ingredients_list %}
-                    <li class="list-group-item ingredient-item" data-original="{{ ingredient }}">
+                    <li class="list-group-item ingredient-item d-flex justify-content-between" data-original="{{ ingredient }}">
                         <span>{{ ingredient }}</span>
                     </li>
                 {% endfor %}
             </ul>
-            <br>
-            {% endif %}
+            {% endif %} 
 
             <!-- Zubereitungsschritte -->
-            {% if recipe.steps %}
-            <h3>Zubereitungsschritte</h3>
+             {% if recipe.steps %}
+            <h3 class="section-title">Zubereitung</h3>
             <ol class="list-group list-group-numbered">
                 {% for step in steps_list %}
                     <li class="list-group-item">{{ step }}</li>
