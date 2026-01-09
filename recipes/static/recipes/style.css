@@ -1,16 +1,21 @@
+/* -------------------------
+   Allgemeine Listen & Bilder
+------------------------- */
 li a {
     color: black;
 }
-.recipe-image {
-    max-height: 320px;
-    width: auto;
-    object-fit: contain;
-}
+
+.recipe-image,
 .recipe-image-wrapper img {
     max-width: 320px;
     max-height: 320px;
     width: auto;
+    object-fit: contain;
 }
+
+/* -------------------------
+   Floating Action Button
+------------------------- */
 .fab {
     position: fixed;
     bottom: 24px;
@@ -24,78 +29,59 @@ li a {
     font-size: 24px;
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
     z-index: 1050;
+    transition: transform 0.2s ease;
 }
 .fab:hover {
     transform: scale(1.1);
-    transition: transform 0.2s ease;
 }
+
+/* -------------------------
+   Transition Icons & Accordion
+------------------------- */
 .transition-icon {
     transition: transform 0.3s ease;
 }
 #filterToggleBtn[aria-expanded="true"] .transition-icon {
     transform: rotate(90deg);
 }
-/* Passt Tom Select an die Bootstrap 'sm' (small) Größe an */
-.ts-wrapper.form-control-sm .ts-control {
-    padding: 5px 10px;
-    min-height: 31px;
-    font-size: 0.875rem;
-}
-.ts-dropdown {
-    font-size: 0.875rem;
-}
-.minus-icon {
-  display: none;
-}
+.minus-icon {display: none;}
+.toggle-btn[aria-expanded="true"] .plus-icon { display: none; }
+.toggle-btn[aria-expanded="true"] .minus-icon { display: inline; }
 
-.toggle-btn[aria-expanded="true"] .plus-icon {
-  display: none;
-}
-
-.toggle-btn[aria-expanded="true"] .minus-icon {
-  display: inline;
-}
 .small-accordion .accordion-button {
-  padding: 0.4rem 0.6rem;
-  font-size: 0.9rem;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.9rem;
 }
+.small-accordion .accordion-button::after { display: none; }
+.small-accordion .accordion-item { border: none; }
 
-.small-accordion .accordion-button::after {
-  display: none;
-}
+/* -------------------------
+   Cards
+------------------------- */
+.card-img-top { object-fit: cover; height: 180px; }
 
-.small-accordion .accordion-item {
-  border: none;
-}
-.card:hover {
-    transform: translateY(-2px);
-    transition: 0.2s ease;
-}
-.card-img-top {
-    object-fit: cover;
-    height: 180px;
-}
+.card,
 .recipe-card {
     border-radius: 1rem;
     overflow: hidden;
-}
-.recipe-card {
-    border-radius: 20px;
     border: none;
-    overflow: hidden;
     background: #fff;
     cursor: pointer;
-
-    box-shadow:
-        0 8px 24px rgba(0, 0, 0, 0.08);
-
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
     transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
-
+.card:hover,
 .recipe-card:hover {
     transform: translateY(-4px);
-    box-shadow:
-        0 12px 32px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+}
+
+/* -------------------------
+   Hero Image + Overlay Buttons
+------------------------- */
+.recipe-hero {
+    position: relative;
+    overflow: hidden;
 }
 .recipe-hero img {
     width: 100%;
@@ -104,6 +90,22 @@ li a {
     border-radius: 20px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.12);
 }
+
+.recipe-buttons-overlay {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    gap: 0.5rem;
+    backdrop-filter: blur(10px);
+    background-color: rgba(255, 255, 255, 0.3);
+    padding: 0.3rem 0.5rem;
+    border-radius: 9999px;
+}
+
+/* -------------------------
+   Info Tiles & Chips
+------------------------- */
 .info-tile {
     background: #f8f9fa;
     border-radius: 14px;
@@ -111,11 +113,8 @@ li a {
     text-align: center;
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
+.info-tile strong { display: block; font-size: 1.2rem; }
 
-.info-tile strong {
-    display: block;
-    font-size: 1.2rem;
-}
 .chip {
     display: inline-block;
     padding: 0.35rem 0.75rem;
@@ -124,9 +123,12 @@ li a {
     margin: 0.15rem;
     background: #f1f3f5;
 }
-
 .chip-category { color: #0d6efd; }
 .chip-event { color: #198754; }
+
+/* -------------------------
+   Action Bar
+------------------------- */
 .action-bar {
     display: flex;
     justify-content: space-between;
@@ -136,12 +138,16 @@ li a {
     border-radius: 16px;
     box-shadow: 0 6px 18px rgba(0,0,0,0.06);
 }
+
+/* -------------------------
+   Servings Stepper
+------------------------- */
 .servings-stepper {
     border-radius: 999px;
     overflow: hidden;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    display: inline-flex;
 }
-
 .servings-stepper button,
 .servings-stepper input {
     border: none;
@@ -150,171 +156,47 @@ li a {
     text-align: center;
     font-size: 1rem;
 }
+.servings-stepper input { width: 50px; }
 
-.servings-stepper input {
-    width: 50px;
-}
-.section-title {
-    font-weight: 600;
-    margin-bottom: 0.75rem;
-}
+/* -------------------------
+   Section Titles
+------------------------- */
+.section-title { font-weight: 600; margin-bottom: 0.75rem; }
 
-/* Optional: Icon zentrieren */
-.btn-ios i {
-    font-size: 1.1rem;
-}
-.btn-ios {
-    border-radius: 999px; /* Pill */
-    padding: 0.4rem 0.9rem;
-    font-weight: 500;
-    border: none;
-
-    background: rgba(13, 110, 253, 0.9);
-    color: #fff;
-
-    box-shadow:
-        0 4px 12px rgba(13, 110, 253, 0.25);
-
-    transition: all 0.2s ease;
-}
-
-.btn-ios:hover {
-    background: rgba(13, 110, 253, 1);
-    transform: translateY(-1px);
-    box-shadow:
-        0 6px 16px rgba(13, 110, 253, 0.35);
-}
-
-
-/* Basis iOS Button */
-.btn-ios {
+/* -------------------------
+   iOS Style Buttons
+------------------------- */
+.btn-ios,
+.btn-ios-secondary,
+.btn-ios-danger,
+.calendar-dropdown {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     padding: 0.5rem 0.8rem;
-    border-radius: 9999px; /* Kapsel */
-    border: 1px solid #007bff;
-    background-color: #ffffff;
-    color: #007bff;
-    font-weight: 500;
-    transition: all 0.2s ease;
-    box-shadow: none;
-}
-
-.btn-ios:hover {
-    background-color: #f0f8ff;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-.btn-ios:active {
-    transform: scale(0.95);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-}
-.btn-ios-secondary {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.5rem 0.8rem;
-    border-radius: 9999px; /* Kapsel */
-    border: 1px solid #333;
-    background-color: #ffffff;
-    color: #333;
-    font-weight: 500;
-    transition: all 0.2s ease;
-    box-shadow: none;
-}
-.btn-ios-secondary:hover {
-    background: rgba(108, 117, 125, 0.25);
-}
-.btn-ios-danger {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.5rem 0.8rem;
-    border-radius: 9999px; /* Kapsel */
-    border: 1px solid #dc3545;
-    background-color: #ffffff;
-    color: #dc3545;
-    font-weight: 500;
-    transition: all 0.2s ease;
-    box-shadow: none;
-
-}
-.btn-ios-danger:hover {
-    background-color: #f8d7da;
-    color: #a71d2a;
-}
-/* Wrapper Buttons über Bild */
-.recipe-hero {
-    position: relative;
-    overflow: hidden;
-}
-
-.recipe-buttons-overlay {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    display: flex;
-    gap: 0.5rem;
-    backdrop-filter: blur(10px); /* iOS-Blur */
-    background-color: rgba(255, 255, 255, 0.3); /* halbtransparent */
-    padding: 0.3rem 0.5rem;
-    border-radius: 9999px; /* runde Kapsel-Form */
-}
-
-/* iOS Buttons für Overlay */
-.recipe-buttons-overlay .btn-ios {
-    border: none; /* Rahmen im Overlay optional */
-    background-color: rgba(255, 255, 255, 0.7);
-    color: #007bff;
-    font-weight: 500;
-    padding: 0.4rem 0.6rem;
     border-radius: 9999px;
-    transition: all 0.2s ease;
-}
-
-.recipe-buttons-overlay .btn-ios:hover {
-    background-color: rgba(255, 255, 255, 0.9);
-    transform: scale(1.05);
-}
-
-.recipe-buttons-overlay .btn-ios:active {
-    transform: scale(0.95);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-}
-
-/* Secondary + Danger Farben */
-.recipe-buttons-overlay .btn-ios-secondary {
-    background-color: rgba(108, 117, 125, 0.7);
-    color: #fff;
-}
-
-.recipe-buttons-overlay .btn-ios-secondary:hover {
-    background-color: rgba(108, 117, 125, 0.9);
-}
-
-.recipe-buttons-overlay .btn-ios-danger {
-    background-color: rgba(220, 53, 69, 0.7);
-    color: #fff;
-}
-
-.recipe-buttons-overlay .btn-ios-danger:hover {
-    background-color: rgba(220, 53, 69, 0.9);
-}
-/* Einheitliche Größe wie andere iOS Buttons */
-.btn-ios, .btn-ios-secondary, .btn-ios-danger, .calendar-dropdown {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.5rem 0.8rem;
-    border-radius: 9999px; /* Kapsel */
     font-weight: 500;
     transition: all 0.2s ease;
     box-shadow: none;
-
 }
+
+.btn-ios { border: 1px solid #007bff; background-color: #fff; color: #007bff; }
+.btn-ios:hover { background-color: #f0f8ff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+.btn-ios:active { transform: scale(0.95); box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+
+.btn-ios-secondary { border: 1px solid #333; background-color: #fff; color: #333; }
+.btn-ios-secondary:hover { background: rgba(108, 117, 125, 0.25); }
+
+.btn-ios-danger { border: 1px solid #dc3545; background-color: #fff; color: #dc3545; }
+.btn-ios-danger:hover { background-color: #f8d7da; color: #a71d2a; }
+
+/* Buttons im Overlay */
+.recipe-buttons-overlay .btn-ios { background-color: rgba(255,255,255,0.7); color: #007bff; }
+.recipe-buttons-overlay .btn-ios:hover { background-color: rgba(255,255,255,0.9); transform: scale(1.05); }
+.recipe-buttons-overlay .btn-ios-secondary { background-color: rgba(108,117,125,0.7); color: #fff; }
+.recipe-buttons-overlay .btn-ios-secondary:hover { background-color: rgba(108,117,125,0.9); }
+.recipe-buttons-overlay .btn-ios-danger { background-color: rgba(220,53,69,0.7); color: #fff; }
+.recipe-buttons-overlay .btn-ios-danger:hover { background-color: rgba(220,53,69,0.9); }
 
 /* Dropdown Caret entfernen */
-.calendar-dropdown::after {
-    display: none;
-}
+.calendar-dropdown::after { display: none; }
