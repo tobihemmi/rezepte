@@ -12,7 +12,13 @@
         <div class="d-flex align-items-center mb-3">
             <h4 class="flex-grow-1 mb-0">{{ recipe.title }}</h4>
         </div>
-        <div class="d-flex justify-content-end gap-2 mb-2">
+        <div class="d-flex gap-2 mb-2">
+            <a
+                href="{% url 'recipes:cook' recipe.slug %}?servings={{ current_servings }}"
+                class="btn btn-outline-primary me-auto"
+            >
+                <i class="bi bi-play-fill"></i>
+            </a>
             <!-- Wochenplan hinzufügen Dropdown -->
             <div class="dropdown d-inline">
                 <button class="btn btn-outline-primary" type="button" id="addToPlanDropdown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -50,10 +56,11 @@
         {% else %}
             <!-- Bild -->
             {% if recipe.image %}
-            <div class="recipe-image-wrapper text-center mb-4">
-                <img src="{{ recipe.image.url }}" class="img-fluid rounded recipe-image" alt="{{ recipe.title }}">
+            <div class="recipe-hero mb-4">
+                <img src="{{ recipe.image.url }}" alt="{{ recipe.title }}">
             </div>
             {% endif %}
+
 
             <!-- Dauer & Temperatur -->
             {% if recipe.duration_minutes %}<p><strong>Gesamtdauer:</strong> {{ recipe.duration_minutes }} Minuten</p>{% endif %}
@@ -90,18 +97,13 @@
             <!-- Portionsauswahl -->
             <div class="mb-3">
                 <label class="form-label"><strong>Portionen:</strong></label>
-                <div class="input-group" style="max-width: 200px;">
+                <div class="input-group" style="max-width: 125px;">
                     <button class="btn btn-outline-secondary" id="minus-btn" type="button">−</button>
                     <input type="number" id="servings-input" class="form-control text-center" value="{{ current_servings }}" min="1">
                     <button class="btn btn-outline-secondary" id="plus-btn" type="button">+</button>
                 </div>
                 <small class="text-muted">Basisrezept für {{ base_servings }} Portionen</small>
             </div>
-
-            <!-- Kochmodus-Link -->
-            <a id="cook-link" href="{% url 'recipes:cook' recipe.slug %}?servings={{ current_servings }}" class="btn btn-outline-primary btn-sm mb-3">
-                Kochmodus starten
-            </a>
 
             <!-- Zutaten -->
             {% if recipe.ingredients %}
