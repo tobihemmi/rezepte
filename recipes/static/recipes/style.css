@@ -13,6 +13,16 @@ li a {
     object-fit: contain;
 }
 
+.btn,
+.btn:hover,
+.btn:focus,
+.btn:active,
+.btn:focus-visible {
+    box-shadow: none;
+    transform: none;
+    transition: none;
+}
+
 /* -------------------------
    Floating Action Button
 ------------------------- */
@@ -23,16 +33,30 @@ li a {
     width: 56px;
     height: 56px;
     border-radius: 50%;
-    display: flex;
+
+    display: inline-flex;
     align-items: center;
     justify-content: center;
+
     font-size: 24px;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+
+    background: #007bff;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    box-shadow:
+        0 8px 24px rgba(0, 0, 0, 0.15),
+        0 1px 2px rgba(0, 0, 0, 0.1);
+
     z-index: 1050;
-    transition: transform 0.2s ease;
+
+    transition: none;
+    -webkit-tap-highlight-color: transparent;
 }
-.fab:hover {
-    transform: scale(1.1);
+
+.fab:hover,
+.fab:active {
+    transform: none;
 }
 
 /* -------------------------
@@ -225,7 +249,7 @@ li a {
 .btn-ios-sm:hover { background-color: #f0f8ff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
 .btn-ios-sm:active { transform: scale(0.95); box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
 
-.btn-ios-sm-secondary { border: 1px solid #333; background-color: #fff; color: #333; }
+.btn-ios-sm-secondary { border: 1px solid #493939; background-color: #fff; color: #333; }
 .btn-ios-secondary:hover { background: rgba(108, 117, 125, 0.25); }
 
 .btn-ios-sm-danger { border: 1px solid #dc3545; background-color: #fff; color: #dc3545; }
