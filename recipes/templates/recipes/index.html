@@ -8,7 +8,7 @@
     <form method="get" action="" id="search-filter-form">
 
         <!-- 🔍 Suche -->
-        <div class="col-12 mb-2">
+        <div class="col-12 mb-4">
             <div class="input-group shadow-sm rounded">
                 <input
                     id="search-input"
@@ -55,11 +55,11 @@
             >
                 <i class="bi bi-sliders me-1"></i>
                 Filter
-                {% if request.GET %}
+                {% if filters_active %}
                     <span class="badge bg-primary ms-1">Aktiv</span>
                 {% endif %}
             </button>
-        </div>
+        </div>  
 
         <!-- 🎛 Filter -->
         <div
@@ -69,7 +69,7 @@
             <div class="row g-2">
 
                 <!-- Dauer -->
-                <div class="col-12 col-md-4">
+                <div class="col-6 col-md-2">
                     <label class="form-label">Gesamtdauer (min)</label>
                     <input
                         class="form-control"
@@ -79,7 +79,7 @@
                     >
                 </div>
 
-                <div class="col-12 col-md-4">
+                <div class="col-6 col-md-2">
                     <label class="form-label">Arbeitsdauer (min)</label>
                     <input
                         class="form-control"

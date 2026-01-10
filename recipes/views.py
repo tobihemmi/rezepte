@@ -100,7 +100,7 @@ class IndexView(generic.ListView):
         if sort_param == "duration":
             qs = qs.order_by("duration_minutes")
         elif sort_param =="cooked":
-            qs = qs.order_by("-cooked_count") #meistgekocht zuerst
+            qs = qs.order_by("cooked_count")
         else:
             qs = qs.order_by("title")
 
@@ -113,12 +113,25 @@ class IndexView(generic.ListView):
         context["labels_event"] = Label.objects.filter(label_type="event")
 
         # ausgewählte Labels
-        context["selected_categories"] = list(map(int, self.request.GET.getlist("category_labels")))
-        context["selected_events"] = list(map(int, self.request.GET.getlist("event_labels")))
+        selected_categories = self.request.GET.getlist("category_labels")
+        selected_events = self.request.GET.getlist("event_labels")
+
+        context["selected_categories"] = list(map(int, selected_categories))
+        context["selected_events"] = list(map(int, selected_events))
 
         context["result_count"] = self.object_list.count()
 
+        # ✅ FILTER STATUS (wichtig!)
+        context["filters_active"] = any([
+            self.request.GET.get("q"),
+            self.request.GET.get("max_duration"),
+            self.request.GET.get("max_working_duration"),
+            selected_categories,
+            selected_events,
+        ])
+
         return context
+
 
 
 class DetailView(generic.DetailView):
