@@ -233,6 +233,9 @@
             </div>
         {% endfor %}
     </div>
+    <a href="{% url 'recipes:create' %}" class="btn btn-primary fab" title="Neues Rezept">
+    <i class="bi bi-plus-lg"></i>
+    </a>
 </div>
 <script>
 document.getElementById("sort-select").addEventListener("change", function() {
