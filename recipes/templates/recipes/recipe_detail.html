@@ -168,14 +168,7 @@
                 </small>
             </div>
 
-            <!-- Zutaten
-             <a id="bring-export-btn"
-                href="#"
-                class="btn btn-success">
-                    🛒 Zu Bring!
-            </a> -->
-
-             {% if recipe.ingredients %}
+            {% if recipe.ingredients %}
             <div itemscope itemtype="https://schema.org/Recipe">
 
                 <meta itemprop="name" content="{{ recipe.title }}">
@@ -236,6 +229,7 @@ document.addEventListener("DOMContentLoaded", function() {
         ingredientsList.forEach(item => {
             const original = item.dataset.original.trim();
             const match = original.match(/^([\d.,/]+)\s*(.*)$/);
+
             if (match) {
                 let amountStr = match[1].replace(",", ".");
                 let rest = match[2];
@@ -243,12 +237,16 @@ document.addEventListener("DOMContentLoaded", function() {
                 let amount = parseFloat(amountStr);
                 if (isNaN(amount) && amountStr.includes("/")) {
                     const parts = amountStr.split("/");
-                    if (parts.length === 2) amount = parseFloat(parts[0])/parseFloat(parts[1]);
+                    if (parts.length === 2) {
+                        amount = parseFloat(parts[0]) / parseFloat(parts[1]);
+                    }
                 }
 
-                item.querySelector("span").textContent = !isNaN(amount) ? (Math.round(amount * factor * 100)/100) + " " + rest : original;
+                item.textContent = !isNaN(amount)
+                    ? (Math.round(amount * factor * 100) / 100) + " " + rest
+                    : original;
             } else {
-                item.querySelector("span").textContent = original;
+                item.textContent = original;
             }
         });
     }
