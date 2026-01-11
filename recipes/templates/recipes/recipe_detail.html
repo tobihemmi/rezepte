@@ -174,16 +174,28 @@
                 class="btn btn-success">
                     🛒 Zu Bring!
             </a>
-<br>
+            
              {% if recipe.ingredients %}
-            <h3 class="section-title">Zutaten</h3>
-            <ul class="list-group list-group-flush mb-4" id="ingredients-list" itemprop="recipeIngredient">
-                {% for ingredient in ingredients_list %}
-                    <li class="list-group-item ingredient-item d-flex justify-content-between" data-original="{{ ingredient }}">
-                        <span>{{ ingredient }}</span>
-                    </li>
-                {% endfor %}
-            </ul>
+            <div itemscope itemtype="https://schema.org/Recipe">
+
+                <meta itemprop="name" content="{{ recipe.title }}">
+                <meta itemprop="url" content="{{ request.build_absolute_uri }}">
+                <meta itemprop="recipeYield" content="{{ base_servings }}">
+
+                <h3 class="section-title">Zutaten</h3>
+
+                <ul class="list-group list-group-flush mb-4" id="ingredients-list">
+                    {% for ingredient in ingredients_list %}
+                        <li class="list-group-item ingredient-item"
+                            itemprop="recipeIngredient"
+                            data-original="{{ ingredient }}">
+                            {{ ingredient }}
+                        </li>
+                    {% endfor %}
+                </ul>
+
+            </div>
+
             {% endif %} 
 
             <!-- Zubereitungsschritte -->
