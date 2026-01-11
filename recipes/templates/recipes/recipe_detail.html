@@ -169,9 +169,15 @@
             </div>
 
             <!-- Zutaten -->
+             <a id="bring-export-btn"
+                href="#"
+                class="btn btn-success">
+                    🛒 Zu Bring!
+            </a>
+<br>
              {% if recipe.ingredients %}
             <h3 class="section-title">Zutaten</h3>
-            <ul class="list-group list-group-flush mb-4" id="ingredients-list">
+            <ul class="list-group list-group-flush mb-4" id="ingredients-list" itemprop="recipeIngredient">
                 {% for ingredient in ingredients_list %}
                     <li class="list-group-item ingredient-item d-flex justify-content-between" data-original="{{ ingredient }}">
                         <span>{{ ingredient }}</span>
@@ -245,6 +251,34 @@ document.addEventListener("DOMContentLoaded", function() {
     // Initiales Update
     updateIngredients();
 });
+
+document.addEventListener("DOMContentLoaded", function() {
+
+    const bringBtn = document.getElementById("bring-export-btn");
+    if (!bringBtn) return;
+
+    const baseServings = parseFloat("{{ base_servings }}");
+    const servingsInput = document.getElementById("servings-input");
+
+    function updateBringLink() {
+        const requestedServings = parseInt(servingsInput.value) || baseServings;
+
+        const recipeUrl = encodeURIComponent(window.location.href);
+
+        const bringUrl =
+            "https://api.getbring.com/rest/bringrecipes/deeplink" +
+            "?url=" + recipeUrl +
+            "&source=web" +
+            "&baseQuantity=" + baseServings +
+            "&requestedQuantity=" + requestedServings;
+
+        bringBtn.href = bringUrl;
+    }
+
+    servingsInput.addEventListener("input", updateBringLink);
+    updateBringLink();
+});
+
 </script>
 
 
