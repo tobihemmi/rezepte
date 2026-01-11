@@ -15,7 +15,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
@@ -25,6 +24,9 @@ SECRET_KEY = 'django-insecure-034k^*4#(awq_6!ney6#-(9*pzf05o%01zv!u=xy=l)kv@^#)_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/"
+LOGIN_URL = "/accounts/login/"
 ALLOWED_HOSTS = ['*']
 
 MEDIA_URL = '/media/'
@@ -35,6 +37,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 INSTALLED_APPS = [
     'recipes.apps.RecipesConfig',
+    'accounts',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -59,7 +62,7 @@ ROOT_URLCONF = 'cookbook.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        "DIRS": [BASE_DIR / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

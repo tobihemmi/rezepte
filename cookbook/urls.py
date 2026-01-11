@@ -23,6 +23,8 @@ from django.views.generic import RedirectView
 urlpatterns = [
     path('recipes/', include("recipes.urls")),
     path('admin/', admin.site.urls),
+    path("accounts/", include("django.contrib.auth.urls")),
+    path("accounts/", include("accounts.urls")),
     path('', RedirectView.as_view(url='/recipes/', permanent=True)),
 ]
 

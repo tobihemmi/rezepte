@@ -9,8 +9,13 @@ import random
 
 from .models import Recipe, Label, WeeklyPlan, WeeklyPlanEntry
 from .forms import RecipeForm
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import redirect_to_login
+
 
 DAYS = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag']
+
 
 def filter_recipes(qs, params):
     # 🔎 Suche
@@ -49,12 +54,13 @@ def filter_recipes(qs, params):
     return qs.distinct()
 
 
-class RecipeCreateView(CreateView):
+class RecipeCreateView(LoginRequiredMixin, CreateView):
     model = Recipe
     form_class = RecipeForm
     template_name = "recipes/recipe_create.html"
 
-class RecipeDeleteView(DeleteView):
+
+class RecipeDeleteView(LoginRequiredMixin, DeleteView):
     model = Recipe
     success_url = reverse_lazy("recipes:index")
     template_name = "recipes/recipe_confirm_delete.html"
@@ -62,7 +68,7 @@ class RecipeDeleteView(DeleteView):
     slug_url_kwarg = "slug"
 
 
-class RecipeUpdateView(View):
+class RecipeUpdateView(LoginRequiredMixin, View):
     template_name = "recipes/recipe_update.html"
 
     def get(self, request, slug):
@@ -102,7 +108,7 @@ class IndexView(generic.ListView):
         if sort_param == "duration":
             qs = qs.order_by("duration_minutes")
         elif sort_param == "cooked":
-            qs = qs.order_by("-cooked_count")
+            qs = qs.order_by("cooked_count")
         else:
             qs = qs.order_by("title")
 
@@ -143,6 +149,8 @@ class DetailView(generic.DetailView):
     slug_url_kwarg = "slug"
 
     def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect_to_login(request.get_full_path())
         self.object = self.get_object()
         if "cooked" in request.POST:
             self.object.cooked_count = F("cooked_count") + 1
@@ -248,6 +256,7 @@ class RandomRecipeView(TemplateView):
         context["days"] = DAYS
         return context
     
+@login_required
 def weekly_plan_view(request):
     week_start = date(2000, 1, 1)
     plan, _ = WeeklyPlan.objects.get_or_create(week_start=week_start)
