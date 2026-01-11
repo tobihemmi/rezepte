@@ -19,10 +19,13 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import RedirectView
+from recipes.views import SignUpView
 
 urlpatterns = [
     path('recipes/', include("recipes.urls")),
     path('admin/', admin.site.urls),
+    path("accounts/", include("django.contrib.auth.urls")),
+    path("accounts/login/", SignUpView.as_view(), name="login"),
     path('', RedirectView.as_view(url='/recipes/', permanent=True)),
 ]
 

@@ -9,8 +9,19 @@ import random
 
 from .models import Recipe, Label, WeeklyPlan, WeeklyPlanEntry
 from .forms import RecipeForm
+from django.contrib.admin.views.decorators import staff_member_required
+from django.utils.decorators import method_decorator
+from django.contrib.auth.forms import UserCreationForm
+
 
 DAYS = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag']
+
+
+class SignUpView(CreateView):
+    form_class = UserCreationForm
+    success_url = reverse_lazy("login")
+    template_name = "registration/login.html"
+
 
 def filter_recipes(qs, params):
     # 🔎 Suche
@@ -49,10 +60,12 @@ def filter_recipes(qs, params):
     return qs.distinct()
 
 
+@method_decorator(staff_member_required, name="dispatch")
 class RecipeCreateView(CreateView):
     model = Recipe
     form_class = RecipeForm
     template_name = "recipes/recipe_create.html"
+
 
 class RecipeDeleteView(DeleteView):
     model = Recipe
@@ -102,7 +115,7 @@ class IndexView(generic.ListView):
         if sort_param == "duration":
             qs = qs.order_by("duration_minutes")
         elif sort_param == "cooked":
-            qs = qs.order_by("-cooked_count")
+            qs = qs.order_by("cooked_count")
         else:
             qs = qs.order_by("title")
 
@@ -248,6 +261,7 @@ class RandomRecipeView(TemplateView):
         context["days"] = DAYS
         return context
     
+@staff_member_required
 def weekly_plan_view(request):
     week_start = date(2000, 1, 1)
     plan, _ = WeeklyPlan.objects.get_or_create(week_start=week_start)
