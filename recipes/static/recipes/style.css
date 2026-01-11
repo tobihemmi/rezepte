@@ -65,9 +65,6 @@ li a {
 .transition-icon {
     transition: transform 0.3s ease;
 }
-#filterToggleBtn[aria-expanded="true"] .transition-icon {
-    transform: rotate(90deg);
-}
 .minus-icon {display: none;}
 .toggle-btn[aria-expanded="true"] .plus-icon { display: none; }
 .toggle-btn[aria-expanded="true"] .minus-icon { display: inline; }
@@ -198,6 +195,8 @@ li a {
 ------------------------- */
 .btn-ios,
 .btn-ios-secondary,
+.btn-ios-success,
+.btn-ios-filter,
 .btn-ios-danger,
 .calendar-dropdown {
     display: inline-flex;
@@ -217,6 +216,10 @@ li a {
 .btn-ios-secondary { border: 1px solid #333; background-color: #fff; color: #333; }
 .btn-ios-secondary:hover { background: rgba(108, 117, 125, 0.25); }
 
+.btn-ios-success { border: 1px solid #01821b; background-color: #fff; color: #01821b; }
+.btn-ios-success:hover { background-color: #f8d7da; color: #084400; }
+
+
 .btn-ios-danger { border: 1px solid #dc3545; background-color: #fff; color: #dc3545; }
 .btn-ios-danger:hover { background-color: #f8d7da; color: #a71d2a; }
 
@@ -234,6 +237,8 @@ li a {
 /* Kleine iOS-Pille */
 .btn-ios-sm,
 .btn-ios-sm-secondary,
+.btn-ios-sm-success,
+.btn-ios-sm-filter,
 .btn-ios-sm-danger {
     display: inline-flex;
     align-items: center;
@@ -251,6 +256,9 @@ li a {
 
 .btn-ios-sm-secondary { border: 1px solid #493939; background-color: #fff; color: #333; }
 .btn-ios-secondary:hover { background: rgba(108, 117, 125, 0.25); }
+
+.btn-ios-sm-success { border: 1px solid #01821b; background-color: #fff; color: #01821b; }
+.btn-ios-sm-success:hover { background-color: #f8d7da; color: #084400; }
 
 .btn-ios-sm-danger { border: 1px solid #dc3545; background-color: #fff; color: #dc3545; }
 .btn-ios-sm-danger:hover { background-color: #f8d7da; color: #a71d2a; }
