@@ -1,5 +1,5 @@
 {% extends 'recipes/base.html' %}
-
+{% load static %}
 {% block title %}
 <title>{{ recipe.title }}</title>
 {% endblock %}
@@ -168,13 +168,13 @@
                 </small>
             </div>
 
-            <!-- Zutaten -->
+            <!-- Zutaten
              <a id="bring-export-btn"
                 href="#"
                 class="btn btn-success">
                     🛒 Zu Bring!
-            </a>
-            
+            </a> -->
+
              {% if recipe.ingredients %}
             <div itemscope itemtype="https://schema.org/Recipe">
 
@@ -182,7 +182,16 @@
                 <meta itemprop="url" content="{{ request.build_absolute_uri }}">
                 <meta itemprop="recipeYield" content="{{ base_servings }}">
 
-                <h3 class="section-title">Zutaten</h3>
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <h3 class="section-title mb-0">Zutaten</h3>
+
+                    <a id="bring-export-btn"
+                    href="#"
+                    class="btn btn-ios d-flex align-items-center gap-1"
+                    title="Zu Bring! exportieren">
+                        <i class="bi bi-cart"></i>
+                    </a>
+                </div>
 
                 <ul class="list-group list-group-flush mb-4" id="ingredients-list">
                     {% for ingredient in ingredients_list %}
