@@ -12,6 +12,43 @@ from .forms import RecipeForm
 
 DAYS = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag']
 
+def filter_recipes(qs, params):
+    # 🔎 Suche
+    query = params.get("q")
+    if query:
+        qs = qs.filter(
+            Q(title__icontains=query) |
+            Q(ingredients__icontains=query)
+        ).distinct()
+
+    # ⏱ Dauer
+    max_duration = params.get("max_duration")
+    if max_duration:
+        try:
+            qs = qs.filter(duration_minutes__lte=int(max_duration))
+        except ValueError:
+            pass
+
+    max_working = params.get("max_working_duration")
+    if max_working:
+        try:
+            qs = qs.filter(working_time__lte=int(max_working))
+        except ValueError:
+            pass
+
+    # 🏷 Labels
+    category_ids = params.getlist("category_labels")
+    event_ids = params.getlist("event_labels")
+
+    if category_ids:
+        qs = qs.filter(labels__id__in=category_ids, labels__label_type="category")
+
+    if event_ids:
+        qs = qs.filter(labels__id__in=event_ids, labels__label_type="event")
+
+    return qs.distinct()
+
+
 class RecipeCreateView(CreateView):
     model = Recipe
     form_class = RecipeForm
@@ -58,49 +95,14 @@ class IndexView(generic.ListView):
     context_object_name = "latest_recipe_list"
 
     def get_queryset(self):
-        qs = super().get_queryset().prefetch_related(
-            "labels"
-        )
+        qs = Recipe.objects.prefetch_related("labels")
+        qs = filter_recipes(qs, self.request.GET)
 
-        # 🔎 Suchbegriff
-        query = self.request.GET.get("q")
-        if query:
-            qs = qs.filter(
-                Q(title__icontains=query) |
-                Q(ingredients__icontains=query)
-            ).distinct()
-
-        # ⏱ Dauerfilter
-        max_duration = self.request.GET.get("max_duration")
-        if max_duration:
-            try:
-                max_minutes = int(max_duration)
-                qs = qs.filter(duration_minutes__lte=max_minutes)
-            except ValueError:
-                pass
-        max_working_duration = self.request.GET.get("max_working_duration")
-        if max_working_duration:
-            try:
-                max_working_minutes = int(max_working_duration)
-                qs = qs.filter(working_time__lte=max_working_minutes)
-            except ValueError:
-                pass
-
-        # 🏷 Labels: AND zwischen Kategorie & Event
-        category_ids = self.request.GET.getlist("category_labels")
-        event_ids = self.request.GET.getlist("event_labels")
-
-        if category_ids:
-            qs = qs.filter(labels__id__in=category_ids, labels__label_type="category").distinct()
-        if event_ids:
-            qs = qs.filter(labels__id__in=event_ids, labels__label_type="event").distinct()
-
-         # **Sortierung nach Parameter**
-        sort_param = self.request.GET.get("sort", "title")  # Default = Alphabet
+        sort_param = self.request.GET.get("sort", "title")
         if sort_param == "duration":
             qs = qs.order_by("duration_minutes")
-        elif sort_param =="cooked":
-            qs = qs.order_by("cooked_count")
+        elif sort_param == "cooked":
+            qs = qs.order_by("-cooked_count")
         else:
             qs = qs.order_by("title")
 
@@ -218,6 +220,18 @@ class RecipeCookView(generic.DetailView):
             "steps_list": [line.strip() for line in recipe.steps.splitlines() if line.strip()],
         })
         return context
+class RandomRecipeView(View):
+
+    def get(self, request, *args, **kwargs):
+        qs = Recipe.objects.all()
+        qs = filter_recipes(qs, request.GET)
+
+        if not qs.exists():
+            return redirect("recipes:index")
+
+        recipe = qs.order_by("?").first()
+
+        return redirect("recipes:randon", slug=recipe.slug)
 
 
 class RandomRecipeView(TemplateView):

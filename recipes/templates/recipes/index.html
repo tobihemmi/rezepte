@@ -9,7 +9,7 @@
 
         <!-- 🔍 Suche -->
         <div class="col-12 mb-4">
-            <div class="input-group shadow-sm rounded">
+            <div class="input-group">
                 <input
                     id="search-input"
                     class="form-control"
@@ -17,11 +17,11 @@
                     name="q"
                     placeholder="Rezept suchen..."
                     value="{{ request.GET.q }}"
-                    autocomplete="off"
+                    autocomplete="on"
                 >
 
                 <!-- Suchen-Button -->
-                <button class="btn btn-outline-primary" type="submit">
+                <button class="btn btn-ios" type="submit">
                     <i class="bi bi-search"></i>
                 </button>
                 <!-- Suche löschen -->
@@ -47,7 +47,7 @@
             </p>
 
             <button
-                class="btn btn-outline-secondary btn-sm"
+                class="btn btn-ios-sm-filter"
                 type="button"
                 data-bs-toggle="collapse"
                 data-bs-target="#filterCollapse"
@@ -56,7 +56,9 @@
                 <i class="bi bi-sliders me-1"></i>
                 Filter
                 {% if filters_active %}
-                    <span class="badge bg-primary ms-1">Aktiv</span>
+                    <i class="bi bi-circle-fill text-primary ms-1"
+                    title="Filter aktiv"
+                    style="font-size:0.5rem; vertical-align:middle;"></i>
                 {% endif %}
             </button>
         </div>  
@@ -133,18 +135,19 @@
 
                 <!-- Buttons -->
                 <div class="col-12 d-flex gap-2 mt-3 mb-3 flex-wrap">
-                    <button class="btn btn-primary flex-fill" type="submit">
+                    <button class="btn btn-ios flex-fill" type="submit">
                         <i class="bi bi-funnel me-1"></i> Anwenden
                     </button>
 
-                    <a href="{% url 'recipes:index' %}" class="btn btn-success flex-fill">
+                    <a href="{% url 'recipes:index' %}" class="btn btn-ios-success flex-fill">
                         <i class="bi bi-arrow-counterclockwise me-1"></i> Zurücksetzen
                     </a>
-
-                    <a href="{% url 'recipes:random' %}?{{ request.GET.urlencode }}"
-                    class="btn btn-secondary flex-fill">
+                    <button
+                        type="submit"
+                        formaction="{% url 'recipes:random' %}"
+                        class="btn btn-ios-secondary flex-fill">
                         <i class="bi bi-shuffle me-1"></i> Zufall
-                    </a>
+                    </button>
                 </div>
 
             </div>
