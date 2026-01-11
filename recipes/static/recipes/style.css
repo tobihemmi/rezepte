@@ -217,8 +217,7 @@ li a {
 .btn-ios-secondary:hover { background: rgba(108, 117, 125, 0.25); }
 
 .btn-ios-success { border: 1px solid #01821b; background-color: #fff; color: #01821b; }
-.btn-ios-success:hover { background-color: #f8d7da; color: #084400; }
-
+.btn-ios-success:hover { background-color: rgba(1, 130, 27, 0.1); color: #01821b;}
 
 .btn-ios-danger { border: 1px solid #dc3545; background-color: #fff; color: #dc3545; }
 .btn-ios-danger:hover { background-color: #f8d7da; color: #a71d2a; }
@@ -258,7 +257,7 @@ li a {
 .btn-ios-secondary:hover { background: rgba(108, 117, 125, 0.25); }
 
 .btn-ios-sm-success { border: 1px solid #01821b; background-color: #fff; color: #01821b; }
-.btn-ios-sm-success:hover { background-color: #f8d7da; color: #084400; }
+.btn-ios-sm-success:hover { background-color: rgba(1, 130, 27, 0.1); color: #01821b;}
 
 .btn-ios-sm-danger { border: 1px solid #dc3545; background-color: #fff; color: #dc3545; }
 .btn-ios-sm-danger:hover { background-color: #f8d7da; color: #a71d2a; }
