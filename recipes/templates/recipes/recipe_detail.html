@@ -1,5 +1,5 @@
 {% extends 'recipes/base.html' %}
-
+{% load static %}
 {% block title %}
 <title>{{ recipe.title }}</title>
 {% endblock %}
@@ -168,16 +168,43 @@
                 </small>
             </div>
 
-            <!-- Zutaten -->
+            <!-- Zutaten
+             <a id="bring-export-btn"
+                href="#"
+                class="btn btn-success">
+                    🛒 Zu Bring!
+            </a> -->
+
              {% if recipe.ingredients %}
-            <h3 class="section-title">Zutaten</h3>
-            <ul class="list-group list-group-flush mb-4" id="ingredients-list">
-                {% for ingredient in ingredients_list %}
-                    <li class="list-group-item ingredient-item d-flex justify-content-between" data-original="{{ ingredient }}">
-                        <span>{{ ingredient }}</span>
-                    </li>
-                {% endfor %}
-            </ul>
+            <div itemscope itemtype="https://schema.org/Recipe">
+
+                <meta itemprop="name" content="{{ recipe.title }}">
+                <meta itemprop="url" content="{{ request.build_absolute_uri }}">
+                <meta itemprop="recipeYield" content="{{ base_servings }}">
+
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <h3 class="section-title mb-0">Zutaten</h3>
+
+                    <a id="bring-export-btn"
+                    href="#"
+                    class="btn btn-ios d-flex align-items-center gap-1"
+                    title="Zu Bring! exportieren">
+                        <i class="bi bi-cart"></i>
+                    </a>
+                </div>
+
+                <ul class="list-group list-group-flush mb-4" id="ingredients-list">
+                    {% for ingredient in ingredients_list %}
+                        <li class="list-group-item ingredient-item"
+                            itemprop="recipeIngredient"
+                            data-original="{{ ingredient }}">
+                            {{ ingredient }}
+                        </li>
+                    {% endfor %}
+                </ul>
+
+            </div>
+
             {% endif %} 
 
             <!-- Zubereitungsschritte -->
@@ -245,6 +272,34 @@ document.addEventListener("DOMContentLoaded", function() {
     // Initiales Update
     updateIngredients();
 });
+
+document.addEventListener("DOMContentLoaded", function() {
+
+    const bringBtn = document.getElementById("bring-export-btn");
+    if (!bringBtn) return;
+
+    const baseServings = parseFloat("{{ base_servings }}");
+    const servingsInput = document.getElementById("servings-input");
+
+    function updateBringLink() {
+        const requestedServings = parseInt(servingsInput.value) || baseServings;
+
+        const recipeUrl = encodeURIComponent(window.location.href);
+
+        const bringUrl =
+            "https://api.getbring.com/rest/bringrecipes/deeplink" +
+            "?url=" + recipeUrl +
+            "&source=web" +
+            "&baseQuantity=" + baseServings +
+            "&requestedQuantity=" + requestedServings;
+
+        bringBtn.href = bringUrl;
+    }
+
+    servingsInput.addEventListener("input", updateBringLink);
+    updateBringLink();
+});
+
 </script>
 
 
