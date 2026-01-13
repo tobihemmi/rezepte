@@ -107,29 +107,30 @@
             <!-- Dauer & Temperatur -->
             <div class="row g-3 mb-4">
                 {% if recipe.duration_minutes %}
-                <div class="col-6 col-md-4">
-                    <div class="info-tile">
-                        ⏱️ <strong>{{ recipe.duration_minutes }}</strong>
+                <div class="col-4">
+                    <div class="info-tile p-2 small">
+                        ⏱️ <strong class="d-block fs-6">{{ recipe.duration_minutes }}</strong>
                         <small>Min Gesamt</small>
                     </div>
                 </div>
+
                 {% endif %}
 
                 {% if recipe.working_time %}
-                <div class="col-6 col-md-4">
-                    <div class="info-tile">
-                        ✋ <strong>{{ recipe.working_time }}</strong>
-                        <small>Min Arbeit</small>
-                    </div>
+                <div class="col-4">
+                <div class="info-tile p-2 small">
+                    ✋ <strong class="d-block fs-6">{{ recipe.working_time }}</strong>
+                    <small>Min Arbeit</small>
+                </div>
                 </div>
                 {% endif %}
 
                 {% if recipe.temperature_celsius %}
-                <div class="col-12 col-md-4">
-                    <div class="info-tile">
-                        🔥 <strong>{{ recipe.temperature_celsius }}°C</strong>
-                        <small>Ober-/Unterhitze</small>
-                    </div>
+                <div class="col-4">
+                <div class="info-tile p-2 small">
+                    🔥 <strong class="d-block fs-6">{{ recipe.temperature_celsius }}</strong>
+                    <small>Ober-/Unterh.</small>
+                </div>
                 </div>
                 {% endif %}
             </div>
@@ -186,7 +187,7 @@
                     </a>
                 </div>
 
-                <ul class="list-group list-group-flush mb-4" id="ingredients-list">
+                <ul class="list-group list-group mb-4 shadow-sm" id="ingredients-list">
                     {% for ingredient in ingredients_list %}
                         <li class="list-group-item ingredient-item"
                             itemprop="recipeIngredient"
@@ -203,7 +204,7 @@
             <!-- Zubereitungsschritte -->
              {% if recipe.steps %}
             <h3 class="section-title">Zubereitung</h3>
-            <ol class="list-group list-group-numbered">
+            <ol class="list-group list-group-numbered shadow-sm">
                 {% for step in steps_list %}
                     <li class="list-group-item">{{ step }}</li>
                 {% endfor %}

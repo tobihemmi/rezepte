@@ -1,2 +1,4 @@
-Suchfenster immer aktiv, nur Filter aufklappbar
-Sortierung bei gekocht von unten nach oben
+Layout Kochmodus
+Schatten bei Zutaten und Zubereitung + Zeit- und Temperaturangaben kleiner
+Popup nach Kochmodus
+Aktuelle Woche in Wochenplanung
