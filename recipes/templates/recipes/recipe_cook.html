@@ -23,35 +23,65 @@
         </div>
         {% endif %}
 
-        <!-- Dauer & Temperatur -->
-        {% if recipe.duration_minutes %}<p><strong>Gesamtdauer:</strong> {{ recipe.duration_minutes }} Minuten</p>{% endif %}
-        {% if recipe.working_time %}<p><strong>Arbeitsdauer:</strong> {{ recipe.working_time }} Minuten</p>{% endif %}
-        {% if recipe.temperature_celsius %}<p><strong>Temperatur:</strong> {{ recipe.temperature_celsius }} °C Ober-/Unterhitze</p>{% endif %}
-
         <!-- Labels -->
         {% if recipe.labels.all %}
-        <p><strong>Labels:</strong>
+        <div class="mb-4">
             {% for label in recipe.labels.all %}
-                {% if label.label_type == "category" %}
-                    <span class="badge rounded-pill border text-primary">{{ label.name }}</span>
-                {% elif label.label_type == "event" %}
-                    <span class="badge rounded-pill border text-success">{{ label.name }}</span>
-                {% else %}
-                    <span class="badge rounded-pill border text-secondary">{{ label.name }}</span>
-                {% endif %}
+                <span class="chip chip-{{ label.label_type }}">
+                    {{ label.name }}
+                </span>
             {% endfor %}
-        </p>
+        </div>
         {% endif %}
+
+       <!-- Dauer & Temperatur -->
+        <div class="row g-3 mb-4">
+            {% if recipe.duration_minutes %}
+            <div class="col-4">
+                <div class="info-tile p-2 small">
+                    ⏱️ <strong class="d-block fs-6">{{ recipe.duration_minutes }}</strong>
+                    <small>Min Gesamt</small>
+                </div>
+            </div>
+
+            {% endif %}
+
+            {% if recipe.working_time %}
+            <div class="col-4">
+            <div class="info-tile p-2 small">
+                ✋ <strong class="d-block fs-6">{{ recipe.working_time }}</strong>
+                <small>Min Arbeit</small>
+            </div>
+            </div>
+            {% endif %}
+
+            {% if recipe.temperature_celsius %}
+            <div class="col-4">
+            <div class="info-tile p-2 small">
+                🔥 <strong class="d-block fs-6">{{ recipe.temperature_celsius }}</strong>
+                <small>Ober-/Unterh.</small>
+            </div>
+            </div>
+            {% endif %}
+        </div>
+
 
         <!-- Portionsauswahl -->
         <div class="mb-3">
-            <label class="form-label"><strong>Portionen:</strong></label>
-            <div class="input-group" style="max-width: 200px;">
-                <button class="btn btn-outline-secondary" id="minus-btn" type="button">−</button>
-                <input type="number" id="servings-input" class="form-control text-center" value="{{ current_servings }}" min="1">
-                <button class="btn btn-outline-secondary" id="plus-btn" type="button">+</button>
+            <!-- Label über dem Stepper -->
+            <label class="form-label fw-semibold d-block mb-2">Portionen</label>
+
+            <!-- Stepper Buttons + Input -->
+            <div class="servings-stepper d-inline-flex mb-2">
+                <button id="minus-btn" type="button">−</button>
+                <input type="number" id="servings-input" value="{{ current_servings }}" min="1">
+                <button id="plus-btn" type="button">+</button>
             </div>
-            <small class="text-muted">Basisrezept für {{ base_servings }} Portionen</small>
+
+            <!-- Hinweis unter Stepper -->
+            <small class="text-muted d-block">
+                Basisrezept für {{ base_servings }} Portionen
+            </small>
         </div>
 
         <!-- Zutaten mit Checkboxen -->
@@ -59,7 +89,7 @@
         <h5>Zutaten</h5>
         <ul class="list-group mb-4" id="ingredients-list">
             {% for ingredient in ingredients_list %}
-                <li class="list-group-item d-flex align-items-start ingredient-item" data-original="{{ ingredient }}">
+                <li class="list-group-item d-flex align-items-start ingredient-item shadow-sm" data-original="{{ ingredient }}">
                     <input type="checkbox" class="form-check-input me-2 mt-1 ingredient-checkbox">
                     <span>{{ ingredient }}</span>
                 </li>
@@ -72,7 +102,7 @@
         <h5>Zubereitungsschritte</h5>
         <ul class="list-group">
             {% for step in steps_list %}
-                <li class="list-group-item d-flex align-items-start">
+                <li class="list-group-item d-flex align-items-start shadow-sm">
                     <input type="checkbox" class="form-check-input me-2 mt-1 step-checkbox">
                     <span class="step-number me-2">{{ forloop.counter }}.</span>
                     <span>{{ step }}</span>
@@ -81,6 +111,17 @@
         </ul>
         {% endif %}
 
+        <div class="action-bar mb-4 mt-4">
+            <form method="post" class="d-flex gap-2 mb-0">
+                {% csrf_token %}
+                <button type="submit" name="cooked" class="btn btn-ios btn-sm">
+                    Fertig
+                </button>
+                <button type="submit" name="back" class="btn btn-ios-secondary btn-sm">
+                    Zurück
+                </button>
+            </form>
+        </div>
     </div>
 </div>
 

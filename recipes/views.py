@@ -205,6 +205,17 @@ class RecipeCookView(generic.DetailView):
     slug_field = "slug"
     slug_url_kwarg = "slug"
 
+    def post(self, request, *args, **kwargs):
+        if "cooked" in request.POST and not request.user.is_authenticated:
+            return redirect_to_login(request.get_full_path())
+        self.object = self.get_object()
+        if "cooked" in request.POST and request.user.is_authenticated:
+            self.object.cooked_count = F("cooked_count") + 1
+            self.object.save(update_fields=["cooked_count"])
+        elif "back" in request.POST:
+            pass
+        return redirect(self.object.get_absolute_url())
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         recipe = self.object
@@ -228,19 +239,6 @@ class RecipeCookView(generic.DetailView):
             "steps_list": [line.strip() for line in recipe.steps.splitlines() if line.strip()],
         })
         return context
-class RandomRecipeView(View):
-
-    def get(self, request, *args, **kwargs):
-        qs = Recipe.objects.all()
-        qs = filter_recipes(qs, request.GET)
-
-        if not qs.exists():
-            return redirect("recipes:index")
-
-        recipe = qs.order_by("?").first()
-
-        return redirect("recipes:randon", slug=recipe.slug)
-
 
 class RandomRecipeView(TemplateView):
     template_name = "recipes/recipe_random.html"
