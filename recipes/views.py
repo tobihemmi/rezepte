@@ -186,8 +186,6 @@ class DetailView(generic.DetailView):
 
 
         return redirect(self.object.get_absolute_url())
-    import datetime
-
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -276,16 +274,81 @@ class RecipeCookView(generic.DetailView):
 class RandomRecipeView(TemplateView):
     template_name = "recipes/recipe_random.html"
 
+    def post(self, request, *args, **kwargs):
+        if "add_to_plan" in request.POST:
+            # Rezept zum Wochenplan hinzufügen
+            recipe_id = request.POST.get("recipe_id")  # Rezept ID aus dem Formular
+            new_date_str = request.POST.get("date")
+            try:
+                new_date = datetime.strptime(new_date_str, "%Y-%m-%d").date()
+            except (ValueError, TypeError):
+                new_date = date.today()
+
+            # Montag der Woche
+            week_monday = new_date - timedelta(days=new_date.weekday())
+            plan, _ = WeeklyPlan.objects.get_or_create(week_start=week_monday)
+
+            # Rezept in den Plan einfügen
+            try:
+                recipe = get_object_or_404(Recipe, id=recipe_id)
+                WeeklyPlanEntry.objects.get_or_create(plan=plan, recipe=recipe, date=new_date)
+            except Recipe.DoesNotExist:
+                # Fallback, falls das Rezept nicht gefunden wurde
+                return redirect("recipes:random")  # Redirect zur Zufalls-Rezept-Seite
+
+            # Redirect zum Wochenplan mit der Woche des ausgewählten Tages
+            return redirect(f"{reverse('recipes:weekly_plan')}?start_date={week_monday.strftime('%Y-%m-%d')}")
+
+        # Rückfall für die GET-Anfrage: Ein zufälliges Rezept anzeigen
+        return self.get(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        index_view = IndexView()
-        index_view.request = self.request
-        qs = index_view.get_queryset()
+        # Filter-Parameter aus der URL
+        query = self.request.GET.get("q")
+        max_duration = self.request.GET.get("max_duration")
+        max_working_duration = self.request.GET.get("max_working_duration")
 
-        context["recipe"] = random.choice(list(qs)) if qs.exists() else None
+        qs = Recipe.objects.all()
+
+        # Filter anwenden, wenn Parameter gesetzt sind
+        if query:
+            qs = qs.filter(
+                Q(title__icontains=query) | 
+                Q(ingredients__icontains=query)
+            ).distinct()
+        
+        if max_duration:
+            try:
+                qs = qs.filter(duration_minutes__lte=int(max_duration))
+            except ValueError:
+                pass
+
+        if max_working_duration:
+            try:
+                qs = qs.filter(working_time__lte=int(max_working_duration))
+            except ValueError:
+                pass
+
+        # Konvertiere QuerySet in Liste
+        recipes = list(qs)  # Konvertiert das QuerySet in eine Liste
+
+        # Debugging-Ausgabe
+        print(f"Gefundene Rezepte: {len(recipes)}")
+
+        if recipes:  # Prüfen, ob Rezepte vorhanden sind
+            context["recipe"] = random.choice(recipes)  # Ein zufälliges Rezept aus der Liste auswählen
+        else:
+            context["recipe"] = None  # Keine Rezepte vorhanden
+
         context["days"] = DAYS
         return context
+
+
+
+
+
 NUM_WEEKS = 1  # Anzahl der Wochen, die angezeigt werden
 
 @login_required
