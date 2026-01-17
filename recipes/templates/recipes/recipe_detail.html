@@ -13,12 +13,9 @@
             <h4 class="flex-grow-1 mb-0">{{ recipe.title }}</h4>
         </div>
 
-        <!-- Wenn ein externer Link vorhanden ist, zeige nur Titel und externen Link -->
-
         {% if recipe.image %}
         <div class="recipe-hero mb-4 position-relative">
             <img src="{{ recipe.image.url }}" alt="{{ recipe.title }}" class="img-fluid rounded">
-
             <!-- Buttons über dem Bild -->
             
             <div class="position-absolute top-0 start-0 w-100 d-flex gap-2 p-2">
@@ -27,21 +24,18 @@
                     <i class="bi bi-play-fill"></i>
                 </a>
                 {% endif %}
-                <!-- Kalender Dropdown -->
-                <div class="dropdown d-inline">
-                    <button class="btn btn-ios calendar-dropdown" type="button" id="addToPlanDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="bi bi-calendar-event"></i>
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="addToPlanDropdown">
-                        {% for day in days %}
-                        <li>
-                            <a class="dropdown-item" href="{% url 'recipes:weekly_plan' %}?action=add&recipe_id={{ recipe.id }}&day={{ day }}{% if request.GET %}&{{ request.GET.urlencode }}{% endif %}">
-                                {{ day }}
-                            </a>
-                        </li>
-                        {% endfor %}
-                    </ul>
-                </div>
+                <!-- Kalender -->
+                <form method="post" class="d-inline-flex align-items-center gap-1">
+                    {% csrf_token %}
+                    <input type="hidden" name="add_to_plan" value="1">
+
+                    <!-- Datepicker -->
+                    <input type="date" name="date"
+                        value="{{ week_dates.0|default:today|date:'Y-m-d' }}"
+                        class="form-control form-control-sm"
+                        style="width: 130px; height: calc(1.5em + 0.75rem + 2px); padding: 0.25rem 0.5rem;"
+                        onchange="this.form.submit();">
+                </form>
 
                 <a href="{% url 'recipes:update' recipe.slug %}" class="btn btn-ios-secondary">
                     <i class="bi bi-pencil-square"></i>
@@ -59,22 +53,18 @@
                 <i class="bi bi-play-fill"></i>
             </a>
             {% endif %}
+            <!-- Kalender -->
+            <form method="post" class="d-inline-flex align-items-center gap-1">
+                {% csrf_token %}
+                <input type="hidden" name="add_to_plan" value="1">
 
-            <div class="dropdown d-inline">
-                <button class="btn btn-ios" type="button" id="addToPlanDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-calendar-event"></i>
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="addToPlanDropdown">
-                    {% for day in days %}
-                        <li>
-                            <a class="dropdown-item" href="{% url 'recipes:weekly_plan' %}?action=add&recipe_id={{ recipe.id }}&day={{ day }}{% if request.GET %}&{{ request.GET.urlencode }}{% endif %}">
-                                {{ day }}
-                            </a>
-                        </li>
-                    {% endfor %}
-                </ul>
-            </div>
-
+                <!-- Datepicker -->
+                <input type="date" name="date"
+                    value="{{ week_dates.0|default:today|date:'Y-m-d' }}"
+                    class="form-control form-control-sm"
+                    style="width: 130px; height: calc(1.5em + 0.75rem + 2px); padding: 0.25rem 0.5rem;"
+                    onchange="this.form.submit();">
+            </form>
             <a href="{% url 'recipes:update' recipe.slug %}" class="btn btn-ios-secondary">
                 <i class="bi bi-pencil-square"></i>
             </a>

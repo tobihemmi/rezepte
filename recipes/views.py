@@ -142,8 +142,6 @@ class IndexView(generic.ListView):
 
         return context
 
-
-
 class DetailView(generic.DetailView):
     model = Recipe
     template_name = "recipes/recipe_detail.html"
@@ -154,6 +152,8 @@ class DetailView(generic.DetailView):
         if not request.user.is_authenticated:
             return redirect_to_login(request.get_full_path())
         self.object = self.get_object()
+
+        # === Cooked / Undo Cooked ===
         if "cooked" in request.POST:
             self.object.cooked_count = F("cooked_count") + 1
             self.object.save(update_fields=["cooked_count"])
@@ -164,11 +164,35 @@ class DetailView(generic.DetailView):
                 output_field=IntegerField(),
             )
             self.object.save(update_fields=["cooked_count"])
+
+        # === Rezept zum Wochenplan hinzufügen ===
+        elif "add_to_plan" in request.POST:
+            # Datum aus Formular
+            new_date_str = request.POST.get("date")
+            try:
+                new_date = datetime.strptime(new_date_str, "%Y-%m-%d").date()
+            except (ValueError, TypeError):
+                new_date = date.today()
+
+            # Montag der Woche
+            week_monday = new_date - timedelta(days=new_date.weekday())
+            plan, _ = WeeklyPlan.objects.get_or_create(week_start=week_monday)
+
+            # Eintrag erstellen, falls nicht schon vorhanden
+            WeeklyPlanEntry.objects.get_or_create(plan=plan, recipe=self.object, date=new_date)
+
+            # Redirect auf Wochenplan mit der Woche des ausgewählten Tages
+            return redirect(f"{reverse('recipes:weekly_plan')}?start_date={week_monday.strftime('%Y-%m-%d')}")
+
+
         return redirect(self.object.get_absolute_url())
+    import datetime
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         recipe = self.object
+        context = super().get_context_data(**kwargs)
 
         # Basisportionen
         base_servings = recipe.servings or 1
@@ -190,15 +214,22 @@ class DetailView(generic.DetailView):
         except BaseException:
             st_list = []
 
+        # === Zusätzlicher Kontext für Wochenplanung ===
+        today = date.today()
+        week_start = today - timedelta(days=today.weekday())
+        week_dates = [week_start + timedelta(days=i) for i in range(7)]
+
         context.update({
             "recipe": recipe,
             "base_servings": base_servings,
             "current_servings": current_servings,
             "ingredients_list": ing_list,
             "steps_list": st_list,
-            "days": DAYS,
+            "today": today,
+            "week_dates": week_dates,  # für den Datepicker oder Button
         })
         return context
+
 
 
 class RecipeCookView(generic.DetailView):
@@ -311,14 +342,23 @@ def weekly_plan_view(request):
             new_date = datetime.strptime(new_date_str, "%Y-%m-%d").date()
         except ValueError:
             new_date = entry.date
+
+        start_date_redirect = params.get("start_date", None)  # von Hidden Input
+        # Plan für das neue Datum erstellen falls nötig
         week_monday = new_date - timedelta(days=new_date.weekday())
         plan, _ = WeeklyPlan.objects.get_or_create(week_start=week_monday)
         entry.plan = plan
         entry.date = new_date
         entry.save()
+        
+        # Redirect: die aktuell angezeigte Woche behalten
         for key in ["action", "entry_id", "date", "recipe_id"]:
             params.pop(key, None)
+        if start_date_redirect:
+            params["start_date"] = start_date_redirect
+
         return redirect(f"{reverse('recipes:weekly_plan')}?{params.urlencode()}")
+
 
     elif action == "remove" and entry_id:
         entry = get_object_or_404(WeeklyPlanEntry, id=entry_id)
