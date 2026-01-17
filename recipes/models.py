@@ -2,6 +2,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils.text import slugify
 from django.utils import timezone
+from django.utils.timezone import now
 
 # Rezeptmodell
 class Recipe(models.Model):
@@ -117,15 +118,18 @@ DAY_CHOICES = [
     ('Sunday', 'Sonntag'),
 ]
 
-# Modell für die Wochenplaneinträge
 class WeeklyPlanEntry(models.Model):
-    plan = models.ForeignKey(WeeklyPlan, related_name="entries", on_delete=models.CASCADE)
-    day = models.CharField(max_length=10, choices=DAY_CHOICES)
+    date = models.DateField(default=now)
+    plan = models.ForeignKey(
+        WeeklyPlan,
+        related_name="entries",
+        on_delete=models.CASCADE
+    )
     recipe = models.ForeignKey('Recipe', on_delete=models.CASCADE)
     comment = models.TextField(blank=True)
 
     class Meta:
-        ordering = ['day', 'id']  # damit die Einträge in Tagesreihenfolge angezeigt werden
+        ordering = ['date', 'id']   # chronologisch
 
     def __str__(self):
-        return f"{self.day}: {self.recipe.title}"
+        return f"{self.date}: {self.recipe.title}"
