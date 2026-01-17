@@ -4,13 +4,25 @@
 li a {
     color: black;
 }
-
 .recipe-image,
 .recipe-image-wrapper img {
     max-width: 320px;
     max-height: 320px;
     width: auto;
     object-fit: contain;
+}
+.navbar {
+    margin-bottom: 0;
+}
+.sticky-filter {
+    top: 56px;
+    position: sticky;
+    z-index: 1010;
+    padding-right: 0.25rem;
+    padding-left: 0.25rem;
+    padding-top: 1rem;
+    padding-bottom: 0.5rem; 
+    background: #ffff;
 }
 
 .btn,
