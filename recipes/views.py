@@ -371,7 +371,10 @@ def weekly_plan_view(request):
     first_monday = start_date - timedelta(days=start_date.weekday())
 
     # === 2. Aktion verarbeiten (add, comment, move, remove, clear) ===
-    params = request.GET.copy()
+    if request.method == "POST":
+        params = request.POST.copy()
+    else:
+        params = request.GET.copy()
     action = params.get("action")
     entry_id = params.get("entry_id")
     recipe_id = params.get("recipe_id")
@@ -399,7 +402,7 @@ def weekly_plan_view(request):
             params.pop(key, None)
         return redirect(f"{reverse('recipes:weekly_plan')}?{params.urlencode()}")
 
-    elif action == "move" and entry_id and new_date_str:
+    elif action == "move":
         entry = get_object_or_404(WeeklyPlanEntry, id=entry_id)
         try:
             new_date = datetime.strptime(new_date_str, "%Y-%m-%d").date()

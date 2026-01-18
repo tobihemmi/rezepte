@@ -31,18 +31,22 @@
                 <!-- Rechte Buttons: Kalender, Edit, Delete -->
                 <div class="d-flex justify-content-end gap-2">
                     <!-- Kalender Button -->
-                    <form method="post" style="margin:0;">
+                    <form method="post" class="calendar-form" style="margin:0;">
                         {% csrf_token %}
                         <input type="hidden" name="add_to_plan" value="1">
 
-                        <button type="button" class="btn btn-ios-secondary position-relative"
-                                style="width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center; line-height: 1; box-sizing: border-box;">
-                            <input type="date" name="date"
-                                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;"
-                                onchange="this.form.submit();">
+                        <input type="text"
+                            name="date"
+                            class="flatpickr-input"
+                            hidden>
+
+                        <button type="button"
+                                class="btn btn-ios-secondary calendar-btn"
+                                style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;">
                             <i class="bi bi-calendar-event"></i>
                         </button>
                     </form>
+
 
                     <a href="{% url 'recipes:update' recipe.slug %}" 
                     class="btn btn-ios-secondary" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
@@ -67,15 +71,18 @@
             {% endif %}
 
             <!-- Kalender Button -->
-            <form method="post" class="d-inline-flex align-items-center gap-1" style="margin:0;">
+            <form method="post" class="calendar-form" style="margin:0;">
                 {% csrf_token %}
                 <input type="hidden" name="add_to_plan" value="1">
 
-                <button type="button" class="btn btn-ios-secondary position-relative"
-                        style="width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center; line-height: 1; box-sizing: border-box;">
-                    <input type="date" name="date"
-                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;"
-                        onchange="this.form.submit();">
+                <input type="text"
+                    name="date"
+                    class="flatpickr-input"
+                    hidden>
+
+                <button type="button"
+                        class="btn btn-ios-secondary calendar-btn"
+                        style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;">
                     <i class="bi bi-calendar-event"></i>
                 </button>
             </form>
@@ -307,6 +314,29 @@ document.addEventListener("DOMContentLoaded", function() {
     servingsInput.addEventListener("input", updateBringLink);
     updateBringLink();
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    document.querySelectorAll(".calendar-form").forEach(form => {
+        const input = form.querySelector(".flatpickr-input");
+        const button = form.querySelector(".calendar-btn");
+
+        const fp = flatpickr(input, {
+            dateFormat: "Y-m-d",      // passt perfekt zu Django
+            defaultDate: "today",
+            disableMobile: true,     // erzwingt flatpickr auch auf iOS
+            onChange: function () {
+                form.submit();
+            }
+        });
+
+        button.addEventListener("click", () => {
+            fp.open();
+        });
+    });
+
+});
+
 
 </script>
 
