@@ -51,5 +51,29 @@
         {% block content %}{% endblock %}
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/de.js"></script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                document.querySelectorAll(".calendar-form").forEach(form => {
+                    const input = form.querySelector(".flatpickr-input");
+                    const button = form.querySelector(".calendar-btn");
+
+                    const fp = flatpickr(input, {
+                        dateFormat: "Y-m-d",
+                        defaultDate: "today",
+                        disableMobile: true,
+                        locale: "de", // ← Deutsch + Wochenstart Montag
+
+                        onChange() {
+                            form.submit();
+                        }
+                    });
+
+                    button.addEventListener("click", () => fp.open());
+                });
+            });
+        </script>
+
+
     </body>
 </html>

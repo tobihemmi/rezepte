@@ -315,29 +315,6 @@ document.addEventListener("DOMContentLoaded", function() {
     updateBringLink();
 });
 
-document.addEventListener("DOMContentLoaded", function () {
-
-    document.querySelectorAll(".calendar-form").forEach(form => {
-        const input = form.querySelector(".flatpickr-input");
-        const button = form.querySelector(".calendar-btn");
-
-        const fp = flatpickr(input, {
-            dateFormat: "Y-m-d",      // passt perfekt zu Django
-            defaultDate: "today",
-            disableMobile: true,     // erzwingt flatpickr auch auf iOS
-            onChange: function () {
-                form.submit();
-            }
-        });
-
-        button.addEventListener("click", () => {
-            fp.open();
-        });
-    });
-
-});
-
-
 </script>
 
 
