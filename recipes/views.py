@@ -305,44 +305,16 @@ class RandomRecipeView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # Filter-Parameter aus der URL
-        query = self.request.GET.get("q")
-        max_duration = self.request.GET.get("max_duration")
-        max_working_duration = self.request.GET.get("max_working_duration")
-
         qs = Recipe.objects.all()
+        qs = filter_recipes(qs, self.request.GET)
 
-        # Filter anwenden, wenn Parameter gesetzt sind
-        if query:
-            qs = qs.filter(
-                Q(title__icontains=query) | 
-                Q(ingredients__icontains=query)
-            ).distinct()
-        
-        if max_duration:
-            try:
-                qs = qs.filter(duration_minutes__lte=int(max_duration))
-            except ValueError:
-                pass
-
-        if max_working_duration:
-            try:
-                qs = qs.filter(working_time__lte=int(max_working_duration))
-            except ValueError:
-                pass
-
-        # Konvertiere QuerySet in Liste
-        recipes = list(qs)  # Konvertiert das QuerySet in eine Liste
-
-        # Debugging-Ausgabe
-        print(f"Gefundene Rezepte: {len(recipes)}")
+        recipes = list(qs)
 
         if recipes:  # Prüfen, ob Rezepte vorhanden sind
             context["recipe"] = random.choice(recipes)  # Ein zufälliges Rezept aus der Liste auswählen
         else:
             context["recipe"] = None  # Keine Rezepte vorhanden
 
-        context["days"] = DAYS
         return context
 
 
