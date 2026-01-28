@@ -300,3 +300,24 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .datepicker-btn::-moz-placeholder { /* Firefox */
     color: transparent;
 }
+/* Zentrierung des Flatpickr-Kalenders */
+.flatpickr-calendar.open {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    /* Translate sorgt für die echte Zentrierung */
+    transform: translate(-50%, -50%) !important;
+    margin: 0 !important;
+    z-index: 99999 !important;
+    
+    /* iOS Safari Fixes */
+    -webkit-transform: translate(-50%, -50%) !important; /* Prefix für ältere Versionen */
+    max-width: 95vw; /* Verhindert, dass er auf schmalen iPhones aus dem Bild ragt */
+}
+
+/* Optional: Verhindert das Scrollen im Hintergrund, wenn offen (iOS "Gummiband"-Effekt) */
+body.flatpickr-active {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+}
