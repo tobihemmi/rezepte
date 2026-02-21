@@ -56,13 +56,7 @@
         <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/de.js"></script>
         <script>
             if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register("{% static 'sw.js' %}")
-                .then(function(reg) {
-                console.log("Service Worker registriert:", reg);
-                })
-                .catch(function(err) {
-                console.log("Fehler:", err);
-                });
+                navigator.serviceWorker.register('/static/sw.js', { scope: '/' });
             }
         </script>
         <script>
