@@ -181,46 +181,52 @@ document.addEventListener("DOMContentLoaded", function() {
     // Füge das innerhalb von document.addEventListener("DOMContentLoaded", function() { ... }) ein:
 
     let wakeLock = null;
-    const statusBadge = document.getElementById('wakelock-status');
-    const statusIcon = document.getElementById('wakelock-icon');
 
-    async function requestWakeLock() {
+    // Funktion zum Anfordern
+    const requestWakeLock = async () => {
         try {
             if ('wakeLock' in navigator) {
                 wakeLock = await navigator.wakeLock.request('screen');
-                
-                // UI Update: Aktiv
-                statusBadge.classList.replace('bg-secondary', 'bg-success');
-                statusIcon.textContent = "💡 aktiv";
-
-                wakeLock.addEventListener('release', () => {
-                    console.log('Wake Lock wurde freigegeben');
-                    // Wenn es nicht manuell war, setzen wir das UI zurück
-                    if (wakeLock !== null) {
-                        statusBadge.classList.replace('bg-success', 'bg-secondary');
-                        statusIcon.textContent = "🌑 inaktiv";
-                    }
-                });
+                console.log('Wake Lock aktiv!');
+                updateUI(true);
             }
         } catch (err) {
             console.error(`${err.name}, ${err.message}`);
-            statusBadge.classList.replace('bg-secondary', 'bg-danger');
-            statusIcon.textContent = "❌ Fehler";
+            updateUI(false);
+        }
+    };
+
+    // UI Aktualisierung
+    function updateUI(isActive) {
+        const statusBadge = document.getElementById('wakelock-status');
+        const statusIcon = document.getElementById('wakelock-icon');
+        if (isActive) {
+            statusBadge.className = 'badge bg-success text-white ms-2';
+            statusIcon.textContent = "💡 aktiv";
+        } else {
+            statusBadge.className = 'badge bg-secondary text-white ms-2';
+            statusIcon.textContent = "🌑 inaktiv";
         }
     }
 
-    // Wake Lock anfordern
-    requestWakeLock();
+    // Trick für iOS: Bei der ersten Berührung der Seite aktivieren
+    ['click', 'touchstart', 'change'].forEach(event => {
+        document.addEventListener(event, () => {
+            if (!wakeLock) {
+                requestWakeLock();
+            }
+        }, { once: false }); // Wir versuchen es bei jeder Interaktion, falls es verloren ging
+    });
 
-    // Re-Aktivieren, wenn die App wieder in den Vordergrund kommt (wichtig für PWAs!)
-    document.addEventListener('visibilitychange', async () => {
-        if (wakeLock !== null && document.visibilityState === 'visible') {
-            await requestWakeLock();
+    // Re-Aktivieren beim Tab-Wechsel
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+            requestWakeLock();
         }
     });
 
 
-});
+    });
 </script>
 
 <style>
