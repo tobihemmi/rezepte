@@ -321,3 +321,16 @@ body.flatpickr-active {
     position: fixed;
     width: 100%;
 }
+
+.ingredient-item, .list-group-item {
+    cursor: pointer;
+    transition: background-color 0.2s;
+    user-select: none; /* Verhindert Markieren beim schnellen Tippen */
+}
+
+/* Wenn gecheckt, Text durchstreichen */
+.ingredient-checkbox:checked + span,
+.step-checkbox:checked + span {
+    text-decoration: line-through;
+    opacity: 0.6;
+}
