@@ -107,17 +107,6 @@ class WeeklyPlan(models.Model):
     def __str__(self):
         return f"Wochenplan ab {self.week_start}"
 
-# Wochentage für den Plan
-DAY_CHOICES = [
-    ('Monday', 'Montag'),
-    ('Tuesday', 'Dienstag'),
-    ('Wednesday', 'Mittwoch'),
-    ('Thursday', 'Donnerstag'),
-    ('Friday', 'Freitag'),
-    ('Saturday', 'Samstag'),
-    ('Sunday', 'Sonntag'),
-]
-
 class WeeklyPlanEntry(models.Model):
     date = models.DateField(default=now)
     plan = models.ForeignKey(

@@ -19,11 +19,20 @@
         </div>
 
         <!-- Bild -->
-        {% if recipe.image %}
-        <div class="recipe-image-wrapper text-center mb-4">
-            <img src="{{ recipe.image.url }}" class="img-fluid rounded recipe-image" alt="{{ recipe.title }}">
+        <div class="recipe-hero mb-4 position-relative">
+
+            {% if recipe.image %}
+                <img src="{{ recipe.image.url }}"
+                    alt="{{ recipe.title }}"
+                    class="img-fluid rounded w-100"
+                    style="object-fit:cover; height:400px;">
+            {% else %}
+                <div class="bg-light d-flex align-items-center justify-content-center text-muted rounded"
+                    style="height:330px;">
+                    Kein Bild
+                </div>
+            {% endif %}
         </div>
-        {% endif %}
 
         <!-- Labels -->
         {% if recipe.labels.all %}

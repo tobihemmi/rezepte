@@ -95,27 +95,40 @@ li a {
 
 .recipe-card {
     border-radius: 1rem;
-    overflow: visible;
+    overflow: hidden; /* Geändert von visible zu hidden, damit Bilder oben die Rundung nicht überlagern */
     border: none;
     background: #fff;
     cursor: pointer;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
     transition: transform 0.25s ease, box-shadow 0.25s ease;
     min-height: 350px;
+    display: flex;
+    flex-direction: column;
 }
-.recipe-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Füllt den Raum aus, damit der Footer nach unten rutscht */
 }
+
 .card-title {
-    display: -webkit-box;        /* Flexbox-artiger Container für clamp */
-    -webkit-box-orient: vertical; /* Vertikale Ausrichtung */
-    overflow: hidden;             /* alles darüber hinaus verstecken */
-    text-overflow: ellipsis;      /* "..." am Ende */
-    line-clamp: 3;                /* maximale Zeilenanzahl */
-    -webkit-line-clamp: 3;        /* maximale Zeilenanzahl */
-    line-height: 1.2em;           /* optional: Zeilenhöhe */
-    max-height: calc(1.2em * 3);  /* optional: Sicherheitsnetz */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 3;
+    line-height: 1.2em;
+    max-height: calc(1.2em * 3);
+    
+    /* --- NEU: Worttrennung --- */
+    hyphens: auto;           /* Trennt Wörter nach Sprache (lang="de") */
+    -webkit-hyphens: auto;
+    word-break: break-word;  /* Fallback für Browser, die hyphens nicht voll unterstützen */
+}
+
+.mt-auto {
+    margin-top: auto !important; /* Stellt sicher, dass Preis/Button immer ganz unten kleben */
 }
 /* -------------------------
    Hero Image + Overlay Buttons
@@ -234,6 +247,17 @@ li a {
 
 .btn-ios-danger { border: 1px solid #dc3545; background-color: #fff; color: #dc3545; }
 .btn-ios-danger:hover { background-color: #f8d7da; color: #a71d2a; }
+
+/* Gilt für alle iOS-Buttons, wenn sie das Attribut 'disabled' haben */
+.btn-ios:disabled, 
+.btn-ios[disabled],
+.btn-ios-disabled {
+    background-color: #F2F2F7 !important;
+    color: #AEAEB2 !important;
+    border-color: #D1D1D6 !important;
+    pointer-events: none;
+    cursor: not-allowed;
+}
 
 /* Buttons im Overlay */
 .recipe-buttons-overlay .btn-ios { background-color: rgba(255,255,255,0.7); color: #007bff; }

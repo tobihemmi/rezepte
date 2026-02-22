@@ -1,4 +1,1 @@
-Layout Kochmodus
-Schatten bei Zutaten und Zubereitung + Zeit- und Temperaturangaben kleiner
-Popup nach Kochmodus
-Aktuelle Woche in Wochenplanung
+

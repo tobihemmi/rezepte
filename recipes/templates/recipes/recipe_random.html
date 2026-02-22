@@ -25,12 +25,20 @@
                     {% endif %}
 
                     <!-- Buttons IMMER gleich -->
-                    <div class="position-absolute top-0 start-0 w-100 d-flex p-2">
+                     <div class="position-absolute top-0 start-0 w-100 d-flex p-2">
                         <!-- Play -->
                         {% if not recipe.external_link %}
                         <div class="me-auto">
                             <a href="{% url 'recipes:cook' recipe.slug %}?servings={{ current_servings }}"
                             class="btn btn-ios"
+                            style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;">
+                                <i class="bi bi-play-fill"></i>
+                            </a>
+                        </div>
+                        {% else %}
+                        <div class="me-auto">
+                            <a
+                            class="btn btn-ios" disabled
                             style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;">
                                 <i class="bi bi-play-fill"></i>
                             </a>
@@ -99,9 +107,12 @@
                     {% endfor %}
                 </div>
                 {% endif %}
-
-                <p>{{ recipe.ingredients }}</p>
-
+                {% if recipe.ingredients %}
+                    <p>{{ recipe.ingredients }}</p>
+                {% else %}
+                    <br>
+                    <p>Keine Zutaten erkannt</p>
+                {% endif%}    
             {% else %}
                 <p class="text-muted">Kein passendes Rezept gefunden.</p>
                 <a href="{% url 'recipes:index' %}" class="btn btn-secondary">
