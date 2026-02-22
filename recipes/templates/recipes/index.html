@@ -176,54 +176,37 @@
     <div class="row g-3">
         {% for recipe in latest_recipe_list %}
             <div class="col-6 col-md-4">
-                <div class="card h-100 shadow-sm recipe-card">
-
-                    <!-- Bild -->
+                <div class="card h-100 shadow-sm recipe-card position-relative">
                     {% if recipe.image %}
-                        <img
-                            src="{{ recipe.image.url }}"
-                            class="card-img-top"
-                            alt="{{ recipe.title }}"
-                            style="object-fit: cover; height: 180px;"
-                        >
+                        <img src="{{ recipe.image.url }}" class="card-img-top" alt="{{ recipe.title }}">
                     {% else %}
-                        <div
-                            class="bg-light d-flex align-items-center justify-content-center text-muted"
-                            style="height: 180px;"
-                        >
+                        <div class="bg-light d-flex align-items-center justify-content-center text-muted" style="height: 180px;">
                             Kein Bild
                         </div>
                     {% endif %}
 
-                    <!-- Inhalt -->
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title mb-1">
-                            <a
-                                href="{% url 'recipes:detail' recipe.slug %}?{{ request.GET.urlencode }}"
-                                class="text-decoration-none text-dark"
-                            >
+                            <a href="{% url 'recipes:detail' recipe.slug %}?{{ request.GET.urlencode }}" 
+                            class="text-decoration-none text-dark stretched-link">
                                 {{ recipe.title }}
                             </a>
                         </h5>
 
-                        {% if recipe.duration_minutes %}
-                            <p class="text-muted small mb-2">
-                                ⏱ {{ recipe.duration_minutes }} Minuten
-                            </p>
-                        {% endif %}
+                        <div class="mt-auto">
+                            <div class="d-flex justify-content-between align-items-center">
+                                
+                                <span class="badge bg-success">
+                                    🍳 {{ recipe.cooked_count }}
+                                </span>
 
-                        <div class="mt-auto d-flex justify-content-between align-items-center">
-                            <span class="badge bg-success">
-                                🍳 {{ recipe.cooked_count }}
-                            </span>
-
-                            <a
-                                href="{% url 'recipes:detail' recipe.slug %}?{{ request.GET.urlencode }}"
-                                class="btn btn-ios-sm"
-                            >
-                                Öffnen
-
-                            </a>
+                                {% if recipe.duration_minutes %}
+                                    <small class="text-muted">
+                                        ⏱ {{ recipe.duration_minutes }} Min.
+                                    </small>
+                                {% endif %}
+                                
+                            </div>
                         </div>
                     </div>
                 </div>

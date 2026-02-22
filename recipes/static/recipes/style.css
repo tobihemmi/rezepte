@@ -101,11 +101,22 @@ li a {
     cursor: pointer;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
     transition: transform 0.25s ease, box-shadow 0.25s ease;
-    min-height: 350px;
+    min-height: 300px;
     display: flex;
     flex-direction: column;
+    position: relative; /* Zwingend notwendig für stretched-link */
+    transition: all 0.25s ease-in-out;
+    cursor: pointer;
+}
+.recipe-card:hover {
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+    border-color: #007bff; /* Optional: Rahmen färbt sich leicht blau */
 }
 
+.recipe-card:hover .btn-ios-sm {
+    background-color: #007bff;
+    color: #fff;
+}
 .card-body {
     display: flex;
     flex-direction: column;
