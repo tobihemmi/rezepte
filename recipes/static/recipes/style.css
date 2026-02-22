@@ -434,7 +434,7 @@ body {
 
     #searchModal .modal-content {
         height: auto;
-        max-height: 80vh; /* Maximal 80% des Bildschirms einnehmen */
+        max-height: 90vh; /* Maximal 80% des Bildschirms einnehmen */
         border-radius: 20px 20px 0 0;
     }
 }
