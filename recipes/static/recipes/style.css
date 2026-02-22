@@ -40,7 +40,7 @@ li a {
 ------------------------- */
 .fab {
     position: fixed;
-    bottom: 24px;
+    bottom: 75px;
     right: 24px;
     width: 56px;
     height: 56px;
@@ -368,4 +368,94 @@ body.flatpickr-active {
 .step-checkbox:checked + span {
     text-decoration: line-through;
     opacity: 0.6;
+}
+
+.mobile-bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 65px;
+    background-color: rgba(255, 255, 255, 0.92); /* iOS-typischer Glas-Effekt */
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-top: 1px solid #D1D1D6;
+    z-index: 1050; /* Über allem anderen */
+    padding-bottom: env(safe-area-inset-bottom); /* Wichtig für iPhones ohne Home-Button */
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: #8E8E93; /* Neutrales Grau */
+    font-size: 0.7rem;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.nav-item i {
+    font-size: 1.4rem;
+    margin-bottom: 2px;
+}
+
+.nav-item.active {
+    color: #007bff; /* Deine Hauptfarbe */
+}
+
+/* Platzhalter am Ende der Seite, damit die Nav nichts verdeckt */
+body {
+    padding-bottom: 80px; 
+}
+
+@media (min-width: 768px) {
+    body { padding-bottom: 0; }
+    .mobile-bottom-nav { display: none; }
+}
+
+/* Macht das Modal zu einer "Bottom-Sheet" Karte auf dem Handy */
+@media (max-width: 575.98px) {
+    #searchModal .modal-dialog {
+        margin: 0;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        transform: translateY(100%);
+        transition: transform 0.3s ease-out;
+    }
+    
+    #searchModal.show .modal-dialog {
+        transform: translateY(0);
+    }
+
+    #searchModal .modal-content {
+        height: auto;
+        max-height: 80vh; /* Maximal 80% des Bildschirms einnehmen */
+        border-radius: 20px 20px 0 0;
+    }
+}
+
+/* Styling für die Filter-Chips im Modal */
+.btn-check + .btn-outline-primary, 
+.btn-check + .btn-outline-secondary {
+    border-color: #D1D1D6;
+    color: #3A3A3C;
+    background: #F2F2F7;
+    margin-bottom: 5px;
+}
+
+.btn-check:checked + .btn-outline-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+}
+
+.btn-check:checked + .btn-outline-secondary {
+    background-color: #5856D6;
+    border-color: #5856D6;
+    color: white;
 }

@@ -17,7 +17,7 @@
     </head>
 
     <body>
-        <nav class="navbar navbar-light bg-light sticky-top shadow-sm">
+        <nav class="navbar navbar-light bg-light sticky-top shadow-sm d-none d-md-flex">
             <div class="container-fluid">
                 <!-- Linke Links -->
                 <div class="navbar-nav d-flex flex-row gap-3">
@@ -49,6 +49,124 @@
             </div>
         </nav>
 
+        <nav class="mobile-bottom-nav d-md-none">
+            <a href="{% url 'recipes:index' %}" class="nav-item {% if request.resolver_match.url_name == 'index' %}active{% endif %}">
+                <i class="bi bi-house"></i>
+                <span>Home</span>
+            </a>
+            
+            <a href="{% url 'recipes:index' %}" class="nav-item" data-bs-toggle="modal" data-bs-target="#searchModal">
+                <i class="bi bi-search"></i>
+                <span>Suche</span>
+            </a>
+                        
+            <a href="{% url 'recipes:weekly_plan' %}" class="nav-item {% if request.resolver_match.url_name == 'weekly_plan' %}active{% endif %}" > <i class="bi bi-calendar-week"></i>
+                <span>Plan</span>
+            </a>
+            
+            {% if user.is_authenticated %}
+            <a href="#" class="nav-item"> <i class="bi bi-person-circle"></i>
+                <span>Account</span>
+            </a>
+            {% else %}
+            <a href="#" class="nav-item"> <i class="bi bi-box-arrow-in-right"></i>
+                <span>Login</span>
+            </a>
+            {% endif %}
+        </nav>
+
+        <div class="modal fade" id="searchModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+                <div class="modal-content border-0 shadow-lg" style="border-radius: 20px 20px 0 0;">
+                    
+                    <div class="d-flex justify-content-center pt-2">
+                        <div style="width: 40px; height: 5px; background: #D1D1D6; border-radius: 10px;"></div>
+                    </div>
+
+                    <div class="modal-header border-0 pb-0">
+                        <h5 class="modal-title w-100 text-center fw-bold">Suche & Filter</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <form method="get" action="{% url 'recipes:index' %}" id="search-filter-form">
+                            
+                            <div class="mb-4">
+                                <label class="form-label small fw-bold text-muted text-uppercase">Stichwort</label>
+                                <div class="input-group">
+                                    <input id="modal-search-input" class="form-control border-end-0" type="text" name="q" 
+                                        placeholder="Rezept suchen..." value="{{ request.GET.q }}">
+                                    <button
+                                        type="button"
+                                        class="btn btn-outline-danger"
+                                        onclick="document.getElementById('modal-search-input').value='';"
+                                        title="Suchfeld löschen"
+                                    >
+                                        <i class="bi bi-x-lg"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="row g-3 mb-4">
+                                <div class="col-6">
+                                    <label class="form-label small fw-bold text-muted text-uppercase">Gesamt (min)</label>
+                                    <input class="form-control" type="number" name="max_duration" value="{{ request.GET.max_duration }}">
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small fw-bold text-muted text-uppercase">Arbeit (min)</label>
+                                    <input class="form-control" type="number" name="max_working_duration" value="{{ request.GET.max_working_duration }}">
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label small fw-bold text-muted text-uppercase d-block">Kategorien</label>
+                                <div class="d-flex flex-wrap gap-2">
+                                    {% for label in labels_category %}
+                                        <input type="checkbox" class="btn-check" name="category_labels" id="cat-{{ label.id }}" value="{{ label.id }}" {% if label.id in selected_categories %}checked{% endif %}>
+                                        <label class="btn btn-outline-primary btn-sm rounded-pill" for="cat-{{ label.id }}">{{ label.name }}</label>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label small fw-bold text-muted text-uppercase d-block">Events</label>
+                                <div class="d-flex flex-wrap gap-2">
+                                    {% for label in labels_event %}
+                                        <input type="checkbox" class="btn-check" name="event_labels" id="evt-{{ label.id }}" value="{{ label.id }}" {% if label.id in selected_events %}checked{% endif %}>
+                                        <label class="btn btn-outline-secondary btn-sm rounded-pill" for="evt-{{ label.id }}">{{ label.name }}</label>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label small fw-bold text-muted text-uppercase">Sortieren nach</label>
+                                <select name="sort" class="form-select border-0 bg-light">
+                                    <option value="title" {% if request.GET.sort == "title" %}selected{% endif %}>Alphabet</option>
+                                    <option value="duration" {% if request.GET.sort == "duration" %}selected{% endif %}>Gesamtdauer</option>
+                                    <option value="cooked" {% if request.GET.sort == "cooked" %}selected{% endif %}>Häufig gekocht</option>
+                                </select>
+                            </div>
+
+                            <div class="col-12 d-flex gap-2 mt-3 mb-3 flex-wrap">
+                                <button class="btn btn-ios flex-fill" type="submit">
+                                    <i class="bi bi-funnel me-1"></i> Anwenden
+                                </button>
+
+                                <a href="{% url 'recipes:index' %}" class="btn btn-ios-success flex-fill">
+                                    <i class="bi bi-arrow-counterclockwise me-1"></i> Zurücksetzen
+                                </a>
+                                <button
+                                    type="submit"
+                                    formaction="{% url 'recipes:random' %}"
+                                    class="btn btn-ios-secondary flex-fill">
+                                    <i class="bi bi-shuffle me-1"></i> Zufall
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
         
         {% block content %}{% endblock %}
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -80,7 +198,5 @@
                 });
             });
         </script>
-
-
     </body>
 </html>

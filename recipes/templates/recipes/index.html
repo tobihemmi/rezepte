@@ -5,8 +5,26 @@
 
     <!-- Überschrift + Filter Toggle -->
     <!-- Suche -->
-    <div class="sticky-filter mt-0">
-    <form method="get" action="" id="search-filter-form" class="mt-0">
+     <h3 class="mb-2 mt-3">Rezeptliste</h3>
+    <div class="d-flex justify-content-between align-items-center mb-2 mt-3 d-md-none">
+        
+        <p class="text-muted mb-0">
+            {% if result_count == 1 %}
+                1 Ergebnis
+            {% else %}
+                {{ result_count }} Ergebnisse
+            {% endif %}
+            {% if filters_active %}
+                <i class="bi bi-circle-fill text-primary ms-1"
+                title="Filter aktiv"
+                style="font-size:0.5rem; vertical-align:middle;"></i>
+            {% endif %}
+        </p>
+    </div>  
+
+
+    <div class="sticky-filter mt-0 d-none d-md-flex">
+        <form method="get" action="" id="search-filter-form" class="mt-0">
     
         <!-- 🔍 Suche -->
         <div class="col-12 mb-4">
@@ -168,7 +186,7 @@
                 </select>
             </div>
         </div>
-    </form>
+        </form>
 
     <hr>
     </div>
@@ -223,6 +241,8 @@
     <i class="bi bi-plus-lg"></i>
     </a>
 </div>
+
+
 <script>
 document.getElementById("sort-select").addEventListener("change", function() {
     const url = new URL(window.location.href);
