@@ -4,13 +4,7 @@
 li a {
     color: black;
 }
-.recipe-image,
-.recipe-image-wrapper img {
-    max-width: 320px;
-    max-height: 320px;
-    width: auto;
-    object-fit: contain;
-}
+
 .navbar {
     margin-bottom: 0;
 }
@@ -93,15 +87,23 @@ li a {
 ------------------------- */
 .card-img-top { object-fit: cover; height: 180px; }
 
+.recipe-image,
+.recipe-image-wrapper img {
+    max-width: 320px;
+    max-height: 320px;
+    width: auto;
+    object-fit: contain;
+}
+
 .recipe-card {
     border-radius: 1rem;
     overflow: hidden; /* Geändert von visible zu hidden, damit Bilder oben die Rundung nicht überlagern */
     border: none;
     background: #fff;
     cursor: pointer;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
     transition: transform 0.25s ease, box-shadow 0.25s ease;
-    min-height: 300px;
+    min-height: 310px;
     display: flex;
     flex-direction: column;
     position: relative; /* Zwingend notwendig für stretched-link */
@@ -113,10 +115,6 @@ li a {
     border-color: #007bff; /* Optional: Rahmen färbt sich leicht blau */
 }
 
-.recipe-card:hover .btn-ios-sm {
-    background-color: #007bff;
-    color: #fff;
-}
 .card-body {
     display: flex;
     flex-direction: column;
@@ -376,7 +374,7 @@ body.flatpickr-active {
     left: 0;
     right: 0;
     height: 65px;
-    background-color: rgba(255, 255, 255, 0.92); /* iOS-typischer Glas-Effekt */
+    background-color: rgba(255, 255, 255, 0.70); /* iOS-typischer Glas-Effekt */
     backdrop-filter: blur(10px);
     display: flex;
     justify-content: space-around;

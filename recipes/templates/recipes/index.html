@@ -5,7 +5,7 @@
 
     <!-- Überschrift + Filter Toggle -->
     <!-- Suche -->
-     <h3 class="mb-2 mt-3">Rezeptliste</h3>
+    <h3 class="mb-2 mt-3">Rezeptliste</h3>
     <div class="d-flex justify-content-between align-items-center mb-2 mt-3 d-md-none">
         
         <p class="text-muted mb-0">
@@ -20,11 +20,17 @@
                 style="font-size:0.5rem; vertical-align:middle;"></i>
             {% endif %}
         </p>
+        {% if filters_active %}
+            <a href="{% url 'recipes:index' %}" class="btn btn-ios-sm-secondary">
+                <i class="bi bi-arrow-counterclockwise me-1"></i> Zurücksetzen
+            </a>
+        {% endif %}
+        
     </div>  
 
 
-    <div class="sticky-filter mt-0 d-none d-md-flex">
-        <form method="get" action="" id="search-filter-form" class="mt-0">
+    <div class="col-12 sticky-filter mt-0 d-none d-md-flex">
+        <form method="get" action="" id="search-filter-form" class="mt-0 w-100">
     
         <!-- 🔍 Suche -->
         <div class="col-12 mb-4">

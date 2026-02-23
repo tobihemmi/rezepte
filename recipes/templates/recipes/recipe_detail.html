@@ -62,6 +62,13 @@
                         </button>
                     </form>
 
+                    <button type="button" 
+                            id="share-button"
+                            class="btn btn-ios-secondary" 
+                            style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;">
+                        <i class="bi bi-share-fill"></i>
+                    </button>
+
                     <a href="{% url 'recipes:update' recipe.slug %}"
                     class="btn btn-ios-secondary"
                     style="width:40px;height:40px;">
@@ -263,34 +270,64 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Initiales Update
     updateIngredients();
-});
+    });
 
-document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function() {
 
-    const bringBtn = document.getElementById("bring-export-btn");
-    if (!bringBtn) return;
+        const bringBtn = document.getElementById("bring-export-btn");
+        if (!bringBtn) return;
 
-    const baseServings = parseFloat("{{ base_servings }}");
-    const servingsInput = document.getElementById("servings-input");
+        const baseServings = parseFloat("{{ base_servings }}");
+        const servingsInput = document.getElementById("servings-input");
 
-    function updateBringLink() {
-        const requestedServings = parseInt(servingsInput.value) || baseServings;
+        function updateBringLink() {
+            const requestedServings = parseInt(servingsInput.value) || baseServings;
 
-        const recipeUrl = encodeURIComponent(window.location.href);
+            const recipeUrl = encodeURIComponent(window.location.href);
 
-        const bringUrl =
-            "https://api.getbring.com/rest/bringrecipes/deeplink" +
-            "?url=" + recipeUrl +
-            "&source=web" +
-            "&baseQuantity=" + baseServings +
-            "&requestedQuantity=" + requestedServings;
+            const bringUrl =
+                "https://api.getbring.com/rest/bringrecipes/deeplink" +
+                "?url=" + recipeUrl +
+                "&source=web" +
+                "&baseQuantity=" + baseServings +
+                "&requestedQuantity=" + requestedServings;
 
-        bringBtn.href = bringUrl;
-    }
+            bringBtn.href = bringUrl;
+        }
 
-    servingsInput.addEventListener("input", updateBringLink);
-    updateBringLink();
-});
+        servingsInput.addEventListener("input", updateBringLink);
+        updateBringLink();
+    });
+    document.addEventListener("DOMContentLoaded", function() {
+        const shareBtn = document.getElementById("share-button");
+        
+        // Prüfen, ob der Browser das Teilen unterstützt (wichtig für PWA)
+        if (navigator.share) {
+            shareBtn.addEventListener("click", async () => {
+                try {
+                    await navigator.share({
+                        title: "{{ recipe.title }}",
+                        text: "Schau dir dieses Rezept an: {{ recipe.title }}",
+                        url: window.location.href
+                    });
+                    console.log("Erfolgreich geteilt");
+                } catch (err) {
+                    console.log("Teilen abgebrochen oder fehlgeschlagen:", err);
+                }
+            });
+        } else {
+            // Fallback: Falls der Browser kein navigator.share kann (z.B. Desktop Chrome ohne HTTPS)
+            shareBtn.addEventListener("click", () => {
+                const tempInput = document.createElement("input");
+                document.body.appendChild(tempInput);
+                tempInput.value = window.location.href;
+                tempInput.select();
+                document.execCommand("copy");
+                document.body.removeChild(tempInput);
+                alert("Link in die Zwischenablage kopiert!");
+            });
+        }
+    });
 
 </script>
 
