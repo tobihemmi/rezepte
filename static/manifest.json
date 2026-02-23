@@ -9,14 +9,7 @@
     {
       "src": "/static/icons/rezept180.png",
       "sizes": "180x180",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "/static/icons/maskable-rezept192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "maskable"
+      "type": "image/png"
     }
   ]
 }
