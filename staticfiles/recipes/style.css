@@ -4,13 +4,7 @@
 li a {
     color: black;
 }
-.recipe-image,
-.recipe-image-wrapper img {
-    max-width: 320px;
-    max-height: 320px;
-    width: auto;
-    object-fit: contain;
-}
+
 .navbar {
     margin-bottom: 0;
 }
@@ -40,7 +34,7 @@ li a {
 ------------------------- */
 .fab {
     position: fixed;
-    bottom: 24px;
+    bottom: 75px;
     right: 24px;
     width: 56px;
     height: 56px;
@@ -93,29 +87,57 @@ li a {
 ------------------------- */
 .card-img-top { object-fit: cover; height: 180px; }
 
+.recipe-image,
+.recipe-image-wrapper img {
+    max-width: 320px;
+    max-height: 320px;
+    width: auto;
+    object-fit: contain;
+}
+
 .recipe-card {
     border-radius: 1rem;
-    overflow: visible;
+    overflow: hidden; /* Geändert von visible zu hidden, damit Bilder oben die Rundung nicht überlagern */
     border: none;
     background: #fff;
     cursor: pointer;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
     transition: transform 0.25s ease, box-shadow 0.25s ease;
-    min-height: 350px;
+    min-height: 310px;
+    display: flex;
+    flex-direction: column;
+    position: relative; /* Zwingend notwendig für stretched-link */
+    transition: all 0.25s ease-in-out;
+    cursor: pointer;
 }
 .recipe-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+    border-color: #007bff; /* Optional: Rahmen färbt sich leicht blau */
 }
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Füllt den Raum aus, damit der Footer nach unten rutscht */
+}
+
 .card-title {
-    display: -webkit-box;        /* Flexbox-artiger Container für clamp */
-    -webkit-box-orient: vertical; /* Vertikale Ausrichtung */
-    overflow: hidden;             /* alles darüber hinaus verstecken */
-    text-overflow: ellipsis;      /* "..." am Ende */
-    line-clamp: 3;                /* maximale Zeilenanzahl */
-    -webkit-line-clamp: 3;        /* maximale Zeilenanzahl */
-    line-height: 1.2em;           /* optional: Zeilenhöhe */
-    max-height: calc(1.2em * 3);  /* optional: Sicherheitsnetz */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 3;
+    line-height: 1.2em;
+    max-height: calc(1.2em * 3);
+    
+    /* --- NEU: Worttrennung --- */
+    hyphens: auto;           /* Trennt Wörter nach Sprache (lang="de") */
+    -webkit-hyphens: auto;
+    word-break: break-word;  /* Fallback für Browser, die hyphens nicht voll unterstützen */
+}
+
+.mt-auto {
+    margin-top: auto !important; /* Stellt sicher, dass Preis/Button immer ganz unten kleben */
 }
 /* -------------------------
    Hero Image + Overlay Buttons
@@ -235,6 +257,17 @@ li a {
 .btn-ios-danger { border: 1px solid #dc3545; background-color: #fff; color: #dc3545; }
 .btn-ios-danger:hover { background-color: #f8d7da; color: #a71d2a; }
 
+/* Gilt für alle iOS-Buttons, wenn sie das Attribut 'disabled' haben */
+.btn-ios:disabled, 
+.btn-ios[disabled],
+.btn-ios-disabled {
+    background-color: #F2F2F7 !important;
+    color: #AEAEB2 !important;
+    border-color: #D1D1D6 !important;
+    pointer-events: none;
+    cursor: not-allowed;
+}
+
 /* Buttons im Overlay */
 .recipe-buttons-overlay .btn-ios { background-color: rgba(255,255,255,0.7); color: #007bff; }
 .recipe-buttons-overlay .btn-ios:hover { background-color: rgba(255,255,255,0.9); transform: scale(1.05); }
@@ -320,4 +353,107 @@ body.flatpickr-active {
     overflow: hidden;
     position: fixed;
     width: 100%;
+}
+
+.ingredient-item, .list-group-item {
+    cursor: pointer;
+    transition: background-color 0.2s;
+    user-select: none; /* Verhindert Markieren beim schnellen Tippen */
+}
+
+/* Wenn gecheckt, Text durchstreichen */
+.ingredient-checkbox:checked + span,
+.step-checkbox:checked + span {
+    text-decoration: line-through;
+    opacity: 0.6;
+}
+
+.mobile-bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 65px;
+    background-color: rgba(255, 255, 255, 0.70); /* iOS-typischer Glas-Effekt */
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-top: 1px solid #D1D1D6;
+    z-index: 1050; /* Über allem anderen */
+    padding-bottom: env(safe-area-inset-bottom); /* Wichtig für iPhones ohne Home-Button */
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: #8E8E93; /* Neutrales Grau */
+    font-size: 0.7rem;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.nav-item i {
+    font-size: 1.4rem;
+    margin-bottom: 2px;
+}
+
+.nav-item.active {
+    color: #007bff; /* Deine Hauptfarbe */
+}
+
+/* Platzhalter am Ende der Seite, damit die Nav nichts verdeckt */
+body {
+    padding-bottom: 80px; 
+}
+
+@media (min-width: 768px) {
+    body { padding-bottom: 0; }
+    .mobile-bottom-nav { display: none; }
+}
+
+/* Macht das Modal zu einer "Bottom-Sheet" Karte auf dem Handy */
+@media (max-width: 575.98px) {
+    #searchModal .modal-dialog {
+        margin: 0;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        transform: translateY(100%);
+        transition: transform 0.3s ease-out;
+    }
+    
+    #searchModal.show .modal-dialog {
+        transform: translateY(0);
+    }
+
+    #searchModal .modal-content {
+        height: auto;
+        max-height: 95vh; /* Maximal 80% des Bildschirms einnehmen */
+        border-radius: 20px 20px 0 0;
+    }
+}
+
+/* Styling für die Filter-Chips im Modal */
+.btn-check + .btn-outline-primary, 
+.btn-check + .btn-outline-secondary {
+    border-color: #D1D1D6;
+    color: #3A3A3C;
+    background: #F2F2F7;
+    margin-bottom: 5px;
+}
+
+.btn-check:checked + .btn-outline-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+}
+
+.btn-check:checked + .btn-outline-secondary {
+    background-color: #5856D6;
+    border-color: #5856D6;
+    color: white;
 }
