@@ -49,6 +49,7 @@
             <div id="ingredients-list">
                 {% for ingredient in recipe.ingredients.splitlines %}
                 <div class="input-group mb-2 ingredient-item">
+                    <span class="input-group-text drag-handle" style="cursor: grab;"><i class="bi bi-grip-vertical"></i></span>
                     <input type="text" name="ingredients" class="form-control" value="{{ ingredient }}">
                     <button type="button" class="btn btn-outline-danger remove-btn">−</button>
                 </div>
@@ -68,6 +69,7 @@
             <div id="steps-list">
                 {% for step in recipe.steps.splitlines %}
                 <div class="input-group mb-2 step-item">
+                    <span class="input-group-text drag-handle" style="cursor: grab;"><i class="bi bi-grip-vertical"></i></span>
                     <textarea name="steps" class="form-control auto-resize">{{ step }}</textarea>
                     <button type="button" class="btn btn-outline-danger remove-btn">−</button>
                 </div>
@@ -99,6 +101,7 @@
     </form>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 <script>
 // Zutaten hinzufügen
 const ingredientsList = document.getElementById('ingredients-list');
@@ -147,6 +150,37 @@ document.querySelectorAll('.auto-resize').forEach(textarea => {
 
     // direkt initial anpassen
     textarea.style.height = textarea.scrollHeight + 'px';
+});
+
+// Sortierbarkeit für Zutaten
+new Sortable(document.getElementById('ingredients-list'), {
+    animation: 150,
+    handle: '.drag-handle', // Nur am Icon ziehbar (optional, sonst überall im Item)
+    ghostClass: 'bg-light'   // Optischer Effekt beim Verschieben
+});
+
+// Sortierbarkeit für Schritte
+new Sortable(document.getElementById('steps-list'), {
+    animation: 150,
+    handle: '.drag-handle',
+    ghostClass: 'bg-light'
+});
+
+// WICHTIG: Passe deine "Hinzufügen"-Funktionen an!
+// Das neue HTML-Snippet in den JS-Funktionen muss jetzt auch das Handle enthalten:
+const dragHandleHTML = '<span class="input-group-text drag-handle" style="cursor: grab;"><i class="bi bi-grip-vertical"></i></span>';
+
+// Beispiel für add-ingredient:
+document.getElementById('add-ingredient').addEventListener('click', () => {
+    const div = document.createElement('div');
+    div.className = 'input-group mb-2 ingredient-item';
+    div.innerHTML = `
+        ${dragHandleHTML}
+        <input type="text" name="ingredients" class="form-control">
+        <button type="button" class="btn btn-danger remove-btn">−</button>
+    `;
+    ingredientsList.appendChild(div);
+    attachRemove(div.querySelector('.remove-btn'));
 });
 </script>
 {% endblock %}
