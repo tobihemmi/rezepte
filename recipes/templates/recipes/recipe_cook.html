@@ -1,21 +1,23 @@
 {% extends 'recipes/base.html' %}
-
+{% block body_class %}bg-lightblue{% endblock %}
 {% block title %}
 <title>{{ recipe.title }} - Kochmodus</title>
 {% endblock %}
 
 {% block content %}
 <!-- Kochmodus Container direkt mit Hintergrund -->
-<div class="bg-lightblue py-3">
+<div class="bg-lightblue p-2">
 
     <div class="container">
 
         <!-- Badge am Titel -->
+        <h3 class="flex-grow-1 mb-0">{{ recipe.title }}</h3>
         <div class="d-flex align-items-center mb-3">
-            <h3 class="flex-grow-1 mb-0">{{ recipe.title }}</h3>
+            <div class="ms-auto">
             <span id="wakelock-status" class="badge bg-secondary text-white ms-2">
                 Kochmodus 🍳 <small id="wakelock-icon">⏳</small>
             </span>
+            </div>
         </div>
 
         <!-- Bild -->
@@ -76,7 +78,7 @@
             {% endif %}
         </div>
 
-
+        {% if base_servings %}
         <!-- Portionsauswahl -->
         <div class="mb-3">
             <!-- Label über dem Stepper -->
@@ -94,7 +96,7 @@
                 Basisrezept für {{ base_servings }} Portionen
             </small>
         </div>
-
+        {% endif %}
         <!-- Zutaten mit Checkboxen -->
         {% if recipe.ingredients %}
         <h5>Zutaten</h5>
@@ -237,11 +239,4 @@ document.addEventListener("DOMContentLoaded", function() {
 
     });
 </script>
-
-<style>
-/* Hintergrund für den gesamten Kochmodus */
-.bg-lightblue {
-    background-color: #e6f2ff;
-}
-</style>
 {% endblock %}

@@ -1,11 +1,12 @@
 {% extends 'recipes/base.html' %}
 {% load static %}
+{% block body_class %}bg-body-tertiary{% endblock %}
 {% block title %}
 <title>{{ recipe.title }}</title>
 {% endblock %}
 
 {% block content %}
-<div class="p-2 mb-3 bg-body-tertiary rounded-3">
+<div class="p-2 rounded-3">
     <div class="container">
 
         <!-- Titel & Buttons -->
@@ -151,13 +152,13 @@
 
                 <span class="text-muted">🍳 {{ recipe.cooked_count }}×</span>
             </div>
-
-            <div class="mb-3">
+            {% if base_servings %}
+            <div>
                 <!-- Label über dem Stepper -->
                 <label class="form-label fw-semibold d-block mb-2">Portionen</label>
 
                 <!-- Stepper Buttons + Input -->
-                <div class="servings-stepper d-inline-flex mb-2">
+                <div class="servings-stepper d-inline-flex">
                     <button id="minus-btn" type="button">−</button>
                     <input type="number" id="servings-input" value="{{ current_servings }}" min="1">
                     <button id="plus-btn" type="button">+</button>
@@ -168,6 +169,7 @@
                     Basisrezept für {{ base_servings }} Portionen
                 </small>
             </div>
+            {% endif %}
 
             {% if recipe.ingredients %}
             <div itemscope itemtype="https://schema.org/Recipe">
@@ -213,7 +215,7 @@
         {% endif %}
 
     </div>
-
+</div>
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     const minusBtn = document.getElementById("minus-btn");
@@ -330,7 +332,4 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
 </script>
-
-
-</div>
 {% endblock %}

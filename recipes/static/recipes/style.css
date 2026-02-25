@@ -1,6 +1,17 @@
 /* -------------------------
    Allgemeine Listen & Bilder
 ------------------------- */
+body {
+    padding-bottom: 80px; 
+}
+body.bg-lightblue {
+    background-color: #e6f2ff !important;
+    min-height: 100vh;
+}
+@media (min-width: 768px) {
+    body { padding-bottom: 0; }
+    .mobile-bottom-nav { display: none; }
+}
 li a {
     color: black;
 }
@@ -8,17 +19,16 @@ li a {
 .navbar {
     margin-bottom: 0;
 }
+
 .sticky-filter {
     top: 56px;
     position: sticky;
     z-index: 1010;
-    padding-right: 0.25rem;
-    padding-left: 0.25rem;
-    padding-top: 1rem;
-    padding-bottom: 0.5rem; 
-    background: #ffff;
+    padding: 1rem 0.25rem 0.5rem 0.25rem; 
+    background: #fff; /* Korrigiert von #ffff */
 }
 
+/* Reset für Standard-Buttons (Vorsicht bei Barrierefreiheit) */
 .btn,
 .btn:hover,
 .btn:focus,
@@ -39,23 +49,17 @@ li a {
     width: 56px;
     height: 56px;
     border-radius: 50%;
-
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     font-size: 24px;
-
     background: #007bff;
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-
     box-shadow:
         0 8px 24px rgba(0, 0, 0, 0.15),
         0 1px 2px rgba(0, 0, 0, 0.1);
-
     z-index: 1050;
-
     transition: none;
     -webkit-tap-highlight-color: transparent;
 }
@@ -71,7 +75,8 @@ li a {
 .transition-icon {
     transition: transform 0.3s ease;
 }
-.minus-icon {display: none;}
+
+.minus-icon { display: none; }
 .toggle-btn[aria-expanded="true"] .plus-icon { display: none; }
 .toggle-btn[aria-expanded="true"] .minus-icon { display: inline; }
 
@@ -85,7 +90,10 @@ li a {
 /* -------------------------
    Cards
 ------------------------- */
-.card-img-top { object-fit: cover; height: 180px; }
+.card-img-top { 
+    object-fit: cover; 
+    height: 180px; 
+}
 
 .recipe-image,
 .recipe-image-wrapper img {
@@ -97,28 +105,27 @@ li a {
 
 .recipe-card {
     border-radius: 1rem;
-    overflow: hidden; /* Geändert von visible zu hidden, damit Bilder oben die Rundung nicht überlagern */
+    overflow: hidden; 
     border: none;
     background: #fff;
     cursor: pointer;
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
     min-height: 310px;
     display: flex;
     flex-direction: column;
-    position: relative; /* Zwingend notwendig für stretched-link */
-    transition: all 0.25s ease-in-out;
-    cursor: pointer;
+    position: relative; 
+    transition: all 0.25s ease-in-out; /* Zusammengefasst */
 }
+
 .recipe-card:hover {
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
-    border-color: #007bff; /* Optional: Rahmen färbt sich leicht blau */
+    border-color: #007bff;
 }
 
 .card-body {
     display: flex;
     flex-direction: column;
-    flex-grow: 1; /* Füllt den Raum aus, damit der Footer nach unten rutscht */
+    flex-grow: 1;
 }
 
 .card-title {
@@ -129,16 +136,15 @@ li a {
     -webkit-line-clamp: 3;
     line-height: 1.2em;
     max-height: calc(1.2em * 3);
-    
-    /* --- NEU: Worttrennung --- */
-    hyphens: auto;           /* Trennt Wörter nach Sprache (lang="de") */
+    hyphens: auto;
     -webkit-hyphens: auto;
-    word-break: break-word;  /* Fallback für Browser, die hyphens nicht voll unterstützen */
+    word-break: break-word;
 }
 
 .mt-auto {
-    margin-top: auto !important; /* Stellt sicher, dass Preis/Button immer ganz unten kleben */
+    margin-top: auto !important;
 }
+
 /* -------------------------
    Hero Image + Overlay Buttons
 ------------------------- */
@@ -160,6 +166,7 @@ li a {
     display: flex;
     gap: 0.5rem;
     backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px); /* Prefix ergänzt */
     background-color: rgba(255, 255, 255, 0.3);
     padding: 0.3rem 0.5rem;
     border-radius: 9999px;
@@ -226,14 +233,10 @@ li a {
 .section-title { font-weight: 600; margin-bottom: 0.75rem; }
 
 /* -------------------------
-   iOS Style Buttons
+   iOS Style Buttons (Standard)
 ------------------------- */
-.btn-ios,
-.btn-ios-secondary,
-.btn-ios-success,
-.btn-ios-filter,
-.btn-ios-danger,
-.calendar-dropdown {
+.btn-ios, .btn-ios-secondary, .btn-ios-success, 
+.btn-ios-filter, .btn-ios-danger, .calendar-dropdown {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -252,23 +255,20 @@ li a {
 .btn-ios-secondary:hover { background: rgba(108, 117, 125, 0.25); }
 
 .btn-ios-success { border: 1px solid #01821b; background-color: #fff; color: #01821b; }
-.btn-ios-success:hover { background-color: rgba(1, 130, 27, 0.1); color: #01821b;}
+.btn-ios-success:hover { background-color: rgba(1, 130, 27, 0.1); }
 
 .btn-ios-danger { border: 1px solid #dc3545; background-color: #fff; color: #dc3545; }
 .btn-ios-danger:hover { background-color: #f8d7da; color: #a71d2a; }
 
-/* Gilt für alle iOS-Buttons, wenn sie das Attribut 'disabled' haben */
-.btn-ios:disabled, 
-.btn-ios[disabled],
-.btn-ios-disabled {
+/* Disabled State */
+.btn-ios:disabled, .btn-ios[disabled], .btn-ios-disabled {
     background-color: #F2F2F7 !important;
     color: #AEAEB2 !important;
     border-color: #D1D1D6 !important;
     pointer-events: none;
-    cursor: not-allowed;
 }
 
-/* Buttons im Overlay */
+/* Overlay Buttons */
 .recipe-buttons-overlay .btn-ios { background-color: rgba(255,255,255,0.7); color: #007bff; }
 .recipe-buttons-overlay .btn-ios:hover { background-color: rgba(255,255,255,0.9); transform: scale(1.05); }
 .recipe-buttons-overlay .btn-ios-secondary { background-color: rgba(108,117,125,0.7); color: #fff; }
@@ -276,37 +276,38 @@ li a {
 .recipe-buttons-overlay .btn-ios-danger { background-color: rgba(220,53,69,0.7); color: #fff; }
 .recipe-buttons-overlay .btn-ios-danger:hover { background-color: rgba(220,53,69,0.9); }
 
-/* Dropdown Caret entfernen */
-.calendar-dropdown::after { display: none; }
-
-/* Kleine iOS-Pille */
-.btn-ios-sm,
-.btn-ios-sm-secondary,
-.btn-ios-sm-success,
-.btn-ios-sm-filter,
-.btn-ios-sm-danger {
+/* -------------------------
+   iOS Style Buttons (Small)
+------------------------- */
+.btn-ios-sm, .btn-ios-sm-secondary, .btn-ios-sm-success, 
+.btn-ios-sm-filter, .btn-ios-sm-danger {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0.25rem 0.5rem; /* kleineres Padding */
-    border-radius: 9999px; /* runde Kapsel */
-    font-size: 0.875rem;   /* kleinere Schrift */
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
     font-weight: 500;
     transition: all 0.2s ease;
 }
 
 .btn-ios-sm { border: 1px solid #007bff; background-color: #fff; color: #007bff; }
-.btn-ios-sm:hover { background-color: #f0f8ff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-.btn-ios-sm:active { transform: scale(0.95); box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+.btn-ios-sm:hover { background-color: #f0f8ff; }
+.btn-ios-sm:active { transform: scale(0.95); }
 
 .btn-ios-sm-secondary { border: 1px solid #493939; background-color: #fff; color: #333; }
-.btn-ios-secondary:hover { background: rgba(108, 117, 125, 0.25); }
+.btn-ios-sm-secondary:hover { background: rgba(108, 117, 125, 0.25); } /* Korrigierter Selektor */
 
 .btn-ios-sm-success { border: 1px solid #01821b; background-color: #fff; color: #01821b; }
-.btn-ios-sm-success:hover { background-color: rgba(1, 130, 27, 0.1); color: #01821b;}
+.btn-ios-sm-success:hover { background-color: rgba(1, 130, 27, 0.1); }
 
 .btn-ios-sm-danger { border: 1px solid #dc3545; background-color: #fff; color: #dc3545; }
 .btn-ios-sm-danger:hover { background-color: #f8d7da; color: #a71d2a; }
+
+/* -------------------------
+   Datepicker & Flatpickr
+------------------------- */
+.calendar-dropdown::after { display: none; }
 
 input[type="date"]::-webkit-calendar-picker-indicator {
     opacity: 0;
@@ -318,70 +319,67 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .datepicker-btn {
     position: relative;
-    color: transparent;       /* Text unsichtbar */
+    color: transparent;
     text-align: left;
 }
 
 .datepicker-btn::-webkit-calendar-picker-indicator {
-    color: transparent;
-    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar" viewBox="0 0 16 16"><path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1.5A1.5 1.5 0 0 1 16 2.5v11A1.5 1.5 0 0 1 14.5 15h-13A1.5 1.5 0 0 1 0 13.5v-11A1.5 1.5 0 0 1 1.5 1H3V.5a.5.5 0 0 1 .5-.5zM1 4v9.5a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5V4H1z"/></svg>') no-repeat center;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1.5A1.5 1.5 0 0 1 16 2.5v11A1.5 1.5 0 0 1 14.5 15h-13A1.5 1.5 0 0 1 0 13.5v-11A1.5 1.5 0 0 1 1.5 1H3V.5a.5.5 0 0 1 .5-.5zM1 4v9.5a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5V4H1z"/></svg>') no-repeat center;
     background-size: 16px 16px;
     cursor: pointer;
     opacity: 1;
 }
 
-.datepicker-btn::-moz-placeholder { /* Firefox */
-    color: transparent;
-}
-/* Zentrierung des Flatpickr-Kalenders */
 .flatpickr-calendar.open {
     position: fixed !important;
     top: 50% !important;
     left: 50% !important;
-    /* Translate sorgt für die echte Zentrierung */
     transform: translate(-50%, -50%) !important;
+    -webkit-transform: translate(-50%, -50%) !important;
     margin: 0 !important;
     z-index: 99999 !important;
-    
-    /* iOS Safari Fixes */
-    -webkit-transform: translate(-50%, -50%) !important; /* Prefix für ältere Versionen */
-    max-width: 95vw; /* Verhindert, dass er auf schmalen iPhones aus dem Bild ragt */
+    max-width: 95vw;
 }
 
-/* Optional: Verhindert das Scrollen im Hintergrund, wenn offen (iOS "Gummiband"-Effekt) */
 body.flatpickr-active {
     overflow: hidden;
     position: fixed;
     width: 100%;
 }
 
+/* -------------------------
+   Checklist Styling
+------------------------- */
 .ingredient-item, .list-group-item {
     cursor: pointer;
     transition: background-color 0.2s;
-    user-select: none; /* Verhindert Markieren beim schnellen Tippen */
+    user-select: none;
 }
 
-/* Wenn gecheckt, Text durchstreichen */
 .ingredient-checkbox:checked + span,
 .step-checkbox:checked + span {
     text-decoration: line-through;
     opacity: 0.6;
 }
 
+/* -------------------------
+   Mobile Bottom Nav
+------------------------- */
 .mobile-bottom-nav {
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
     height: 65px;
-    background-color: rgba(255, 255, 255, 0.70); /* iOS-typischer Glas-Effekt */
+    background-color: rgba(255, 255, 255, 0.70);
     backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px); /* Prefix ergänzt */
     display: flex;
     justify-content: space-around;
     align-items: center;
     border-top: 1px solid #D1D1D6;
-    z-index: 1050; /* Über allem anderen */
-    padding-bottom: env(safe-area-inset-bottom); /* Wichtig für iPhones ohne Home-Button */
+    z-index: 1050;
+    padding-bottom: env(safe-area-inset-bottom);
 }
 
 .nav-item {
@@ -389,7 +387,7 @@ body.flatpickr-active {
     flex-direction: column;
     align-items: center;
     text-decoration: none;
-    color: #8E8E93; /* Neutrales Grau */
+    color: #8E8E93;
     font-size: 0.7rem;
     font-weight: 500;
     transition: color 0.2s;
@@ -401,20 +399,12 @@ body.flatpickr-active {
 }
 
 .nav-item.active {
-    color: #007bff; /* Deine Hauptfarbe */
+    color: #007bff;
 }
 
-/* Platzhalter am Ende der Seite, damit die Nav nichts verdeckt */
-body {
-    padding-bottom: 80px; 
-}
-
-@media (min-width: 768px) {
-    body { padding-bottom: 0; }
-    .mobile-bottom-nav { display: none; }
-}
-
-/* Macht das Modal zu einer "Bottom-Sheet" Karte auf dem Handy */
+/* -------------------------
+   Modals & Search
+------------------------- */
 @media (max-width: 575.98px) {
     #searchModal .modal-dialog {
         margin: 0;
@@ -432,12 +422,11 @@ body {
 
     #searchModal .modal-content {
         height: auto;
-        max-height: 95vh; /* Maximal 80% des Bildschirms einnehmen */
+        max-height: 95vh;
         border-radius: 20px 20px 0 0;
     }
 }
 
-/* Styling für die Filter-Chips im Modal */
 .btn-check + .btn-outline-primary, 
 .btn-check + .btn-outline-secondary {
     border-color: #D1D1D6;
