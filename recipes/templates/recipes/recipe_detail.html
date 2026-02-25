@@ -153,12 +153,12 @@
                 <span class="text-muted">🍳 {{ recipe.cooked_count }}×</span>
             </div>
             {% if base_servings %}
-            <div>
+            <div class="mb-3">
                 <!-- Label über dem Stepper -->
                 <label class="form-label fw-semibold d-block mb-2">Portionen</label>
 
                 <!-- Stepper Buttons + Input -->
-                <div class="servings-stepper d-inline-flex">
+                <div class="servings-stepper d-inline-flex mb-2">
                     <button id="minus-btn" type="button">−</button>
                     <input type="number" id="servings-input" value="{{ current_servings }}" min="1">
                     <button id="plus-btn" type="button">+</button>
