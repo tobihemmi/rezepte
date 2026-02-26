@@ -330,15 +330,18 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     opacity: 1;
 }
 
+.flatpickr-calendar {
+    border-radius: 18px !important; /* Passend zum iOS-Stil */
+    border: none !important;
+}
+
 .flatpickr-calendar.open {
     position: fixed !important;
     top: 50% !important;
     left: 50% !important;
-    transform: translate(-50%, -50%) !important;
-    -webkit-transform: translate(-50%, -50%) !important;
+    -webkit-transform: translate(-50%, -70%) !important;
     margin: 0 !important;
-    z-index: 99999 !important;
-    max-width: 95vw;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.2) !important; /* Etwas mehr Tiefe für den "Modal"-Look */
 }
 
 body.flatpickr-active {
