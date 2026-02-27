@@ -52,12 +52,10 @@ def filter_recipes(qs, params):
 
     return qs.distinct()
 
-
 class RecipeCreateView(LoginRequiredMixin, CreateView):
     model = Recipe
     form_class = RecipeForm
     template_name = "recipes/recipe_create.html"
-
 
 class RecipeDeleteView(LoginRequiredMixin, DeleteView):
     model = Recipe
@@ -65,7 +63,6 @@ class RecipeDeleteView(LoginRequiredMixin, DeleteView):
     template_name = "recipes/recipe_confirm_delete.html"
     slug_field = "slug"
     slug_url_kwarg = "slug"
-
 
 class RecipeUpdateView(LoginRequiredMixin, View):
     template_name = "recipes/recipe_update.html"
@@ -166,20 +163,20 @@ class DetailView(generic.DetailView):
         elif "add_to_plan" in request.POST:
             # Datum aus Formular
             new_date_str = request.POST.get("date")
+            date_today = date.today()
             try:
                 new_date = datetime.strptime(new_date_str, "%Y-%m-%d").date()
             except (ValueError, TypeError):
-                new_date = date.today()
+                new_date = date_today
 
             # Montag der Woche
-            week_monday = new_date - timedelta(days=new_date.weekday())
-            plan, _ = WeeklyPlan.objects.get_or_create(week_start=week_monday)
+            plan, _ = WeeklyPlan.objects.get_or_create(week_start=date_today)
 
             # Eintrag erstellen, falls nicht schon vorhanden
             WeeklyPlanEntry.objects.get_or_create(plan=plan, recipe=self.object, date=new_date)
 
             # Redirect auf Wochenplan mit der Woche des ausgewählten Tages
-            return redirect(f"{reverse('recipes:weekly_plan')}?start_date={week_monday.strftime('%Y-%m-%d')}")
+            return redirect(f"{reverse('recipes:weekly_plan')}?start_date={date_today.strftime('%Y-%m-%d')}")
 
 
         return redirect(self.object.get_absolute_url())
@@ -224,8 +221,6 @@ class DetailView(generic.DetailView):
             "week_dates": week_dates,  # für den Datepicker oder Button
         })
         return context
-
-
 
 class RecipeCookView(generic.DetailView):
     model = Recipe
@@ -284,14 +279,13 @@ class RandomRecipeView(TemplateView):
             # Rezept zum Wochenplan hinzufügen
             recipe_id = request.POST.get("recipe_id")  # Rezept ID aus dem Formular
             new_date_str = request.POST.get("date")
+            date_today = date.today()
             try:
                 new_date = datetime.strptime(new_date_str, "%Y-%m-%d").date()
             except (ValueError, TypeError):
-                new_date = date.today()
+                new_date = date_today
 
-            # Montag der Woche
-            week_monday = new_date - timedelta(days=new_date.weekday())
-            plan, _ = WeeklyPlan.objects.get_or_create(week_start=week_monday)
+            plan, _ = WeeklyPlan.objects.get_or_create(week_start=date_today)
 
             # Rezept in den Plan einfügen
             try:
@@ -302,7 +296,7 @@ class RandomRecipeView(TemplateView):
                 return redirect("recipes:random")  # Redirect zur Zufalls-Rezept-Seite
 
             # Redirect zum Wochenplan mit der Woche des ausgewählten Tages
-            return redirect(f"{reverse('recipes:weekly_plan')}?start_date={week_monday.strftime('%Y-%m-%d')}")
+            return redirect(f"{reverse('recipes:weekly_plan')}?start_date={date_today.strftime('%Y-%m-%d')}")
 
         # Rückfall für die GET-Anfrage: Ein zufälliges Rezept anzeigen
         return self.get(request, *args, **kwargs)
@@ -322,30 +316,25 @@ class RandomRecipeView(TemplateView):
 
         return context
 
-
-
-
-
-NUM_WEEKS = 1  # Anzahl der Wochen, die angezeigt werden
-
 @login_required
 def weekly_plan_view(request):
     """
-    Zeigt mehrere Wochen des Wochenplans an, montags startend.
+    Zeigt mehrere Wochen des Wochenplans an.
     Bestehende Einträge werden automatisch den richtigen Wochen zugeordnet.
     """
     # === 1. Datum der aktuellen Ansicht bestimmen ===
     start_date_str = request.GET.get("start_date")
+    date_today = date.today()
     if start_date_str:
         try:
             start_date = datetime.strptime(start_date_str, "%Y-%m-%d").date()
         except ValueError:
-            start_date = date.today()
+            start_date = date_today
     else:
-        start_date = date.today()
+        start_date = date_today
 
     # Montag der ersten angezeigten Woche
-    first_monday = start_date - timedelta(days=start_date.weekday())
+    # first_monday = start_date - timedelta(days=start_date.weekday())
 
     # === 2. Aktion verarbeiten (add, comment, move, remove, clear) ===
     if request.method == "POST":
@@ -363,8 +352,7 @@ def weekly_plan_view(request):
             entry_date = datetime.strptime(new_date_str, "%Y-%m-%d").date()
         except ValueError:
             entry_date = date.today()
-        week_monday = entry_date - timedelta(days=entry_date.weekday())
-        plan, _ = WeeklyPlan.objects.get_or_create(week_start=week_monday)
+        plan, _ = WeeklyPlan.objects.get_or_create(week_start=start_date)
         WeeklyPlanEntry.objects.create(plan=plan, recipe=recipe, date=entry_date)
 
         for key in ["action", "recipe_id", "date", "entry_id"]:
@@ -388,8 +376,7 @@ def weekly_plan_view(request):
 
         start_date_redirect = params.get("start_date", None)  # von Hidden Input
         # Plan für das neue Datum erstellen falls nötig
-        week_monday = new_date - timedelta(days=new_date.weekday())
-        plan, _ = WeeklyPlan.objects.get_or_create(week_start=week_monday)
+        plan, _ = WeeklyPlan.objects.get_or_create(week_start=start_date)
         entry.plan = plan
         entry.date = new_date
         entry.save()
@@ -418,28 +405,25 @@ def weekly_plan_view(request):
 
     # === 3. Bestehende Einträge automatisch den Wochen zuordnen ===
     for entry in WeeklyPlanEntry.objects.all():
-        week_monday = entry.date - timedelta(days=entry.date.weekday())
-        if entry.plan is None or entry.plan.week_start != week_monday:
-            plan, _ = WeeklyPlan.objects.get_or_create(week_start=week_monday)
+        if entry.plan is None or entry.plan.week_start != start_date:
+            plan, _ = WeeklyPlan.objects.get_or_create(week_start=start_date)
             entry.plan = plan
             entry.save()
 
     # === 4. Wochen für die Ansicht vorbereiten ===
     weeks = []
-    for w in range(NUM_WEEKS):
-        week_monday = first_monday + timedelta(weeks=w)
-        week_dates = [week_monday + timedelta(days=i) for i in range(7)]
-        plan, _ = WeeklyPlan.objects.get_or_create(week_start=week_monday)
-        day_entries_list = [(d, plan.entries.filter(date=d)) for d in week_dates]
-        weeks.append({
-            "week_start": week_monday,
-            "week_dates": week_dates,
-            "day_entries_list": day_entries_list
-        })
+    week_dates = [start_date + timedelta(days=i) for i in range(7)]
+    plan, _ = WeeklyPlan.objects.get_or_create(week_start=start_date)
+    day_entries_list = [(d, plan.entries.filter(date=d)) for d in week_dates]
+    weeks.append({
+        "week_start": start_date,
+        "week_dates": week_dates,
+        "day_entries_list": day_entries_list
+    })
 
     # === 5. Navigation ===
-    prev_week = first_monday - timedelta(days=7)
-    next_week = first_monday + timedelta(days=7 * NUM_WEEKS)
+    prev_week = start_date - timedelta(days=7)
+    next_week = start_date + timedelta(days=7)
 
     today = date.today()
 
@@ -448,6 +432,6 @@ def weekly_plan_view(request):
         "weeks": weeks,
         "prev_week": prev_week,
         "next_week": next_week,
-        "today": today,  # <-- neu
+        "today": today,
     }
     return render(request, "recipes/weekly_plan.html", context)
