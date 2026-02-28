@@ -429,7 +429,7 @@ body.flatpickr-active {
     #searchModal .modal-content {
         /* WICHTIG: Höhe passt sich dem Inhalt an */
         height: auto; 
-        max-height: 92vh; /* Verhindert, dass es oben aus dem Bild rutscht */
+        max-height: 95vh; /* Verhindert, dass es oben aus dem Bild rutscht */
         
         border-radius: 20px 20px 0 0;
         border: none;
@@ -442,7 +442,7 @@ body.flatpickr-active {
     #searchModal.show .modal-dialog {
         transform: translateY(0);
     }
-    
+
     /* Ergänze dies in deinem Media Query */
     #searchModal .modal-dialog.dragging {
         transition: none; /* Verhindert Ruckeln beim Ziehen */
