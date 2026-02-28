@@ -442,7 +442,7 @@ body.flatpickr-active {
     #searchModal.show .modal-dialog {
         transform: translateY(0);
     }
-}
+    
     /* Ergänze dies in deinem Media Query */
     #searchModal .modal-dialog.dragging {
         transition: none; /* Verhindert Ruckeln beim Ziehen */
