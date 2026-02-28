@@ -407,24 +407,40 @@ body.flatpickr-active {
    Modals & Search
 ------------------------- */
 @media (max-width: 575.98px) {
+    #searchModal {
+        z-index: 2000 !important;
+    }
+
     #searchModal .modal-dialog {
-        margin: 0;
+        margin: 0 !important;
         position: fixed;
         bottom: 0;
         left: 0;
         right: 0;
+        width: 100%;
+        max-width: 100%;
+        
+        /* Sorgt dafür, dass der Dialog selbst ganz unten sitzt */
+        display: flex;
+        align-items: flex-end;
+        height: 100%; 
+        
         transform: translateY(100%);
         transition: transform 0.3s ease-out;
     }
-    
+
     #searchModal.show .modal-dialog {
         transform: translateY(0);
     }
 
     #searchModal .modal-content {
-        height: auto;
-        max-height: 95vh;
+        /* Hier stellen wir die 75% Höhe ein */
+        height: 85vh; 
+        
         border-radius: 20px 20px 0 0;
+        border: none;
+        overflow-y: auto; /* Erlaubt Scrollen innerhalb des Modals */
+        padding-bottom: env(safe-area-inset-bottom);
     }
 }
 
@@ -437,13 +453,13 @@ body.flatpickr-active {
 }
 
 .btn-check:checked + .btn-outline-primary {
-    background-color: #007bff;
-    border-color: #007bff;
+    background-color: #0d6efd;
+    border-color: #0d6efd;
     color: white;
 }
 
 .btn-check:checked + .btn-outline-secondary {
-    background-color: #5856D6;
-    border-color: #5856D6;
+    background-color: #198754;
+    border-color: #198754;
     color: white;
 }
