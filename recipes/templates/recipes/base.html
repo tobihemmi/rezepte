@@ -82,7 +82,7 @@
             <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
                 <div class="modal-content border-0 shadow-lg" style="border-radius: 20px 20px 0 0;">
                     
-                    <div class="d-flex justify-content-center pt-2">
+                    <div class="d-flex justify-content-center pt-2" id="modal-drag-handle" style="cursor: grab;">
                         <div style="width: 40px; height: 5px; background: #D1D1D6; border-radius: 10px;"></div>
                     </div>
 
@@ -199,6 +199,42 @@
 
                     button.addEventListener("click", () => fp.open());
                 });
+            });
+            const modal = document.querySelector('#searchModal');
+            const dialog = modal.querySelector('.modal-dialog');
+            let startY = 0;
+            let currentY = 0;
+
+            dialog.addEventListener('touchstart', (e) => {
+                startY = e.touches[0].clientY;
+                dialog.classList.add('dragging');
+            }, { passive: true });
+
+            dialog.addEventListener('touchmove', (e) => {
+                currentY = e.touches[0].clientY;
+                const deltaY = currentY - startY;
+
+                // Nur nach unten schieben erlauben
+                if (deltaY > 0) {
+                    dialog.style.transform = `translateY(${deltaY}px)`;
+                }
+            }, { passive: true });
+
+            dialog.addEventListener('touchend', (e) => {
+                dialog.classList.remove('dragging');
+                const deltaY = currentY - startY;
+                const threshold = dialog.offsetHeight * 0.25; // 25% des Modals gewischt?
+
+                if (deltaY > threshold) {
+                    // Modal schließen via Bootstrap API
+                    const bsModal = bootstrap.Modal.getInstance(modal);
+                    bsModal.hide();
+                } 
+                
+                // Reset der Position (entweder es schließt sich oder springt zurück)
+                dialog.style.transform = '';
+                startY = 0;
+                currentY = 0;
             });
         </script>
     </body>

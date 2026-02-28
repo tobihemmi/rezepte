@@ -407,10 +407,6 @@ body.flatpickr-active {
    Modals & Search
 ------------------------- */
 @media (max-width: 575.98px) {
-    #searchModal {
-        z-index: 2000 !important;
-    }
-
     #searchModal .modal-dialog {
         margin: 0 !important;
         position: fixed;
@@ -420,27 +416,46 @@ body.flatpickr-active {
         width: 100%;
         max-width: 100%;
         
-        /* Sorgt dafür, dass der Dialog selbst ganz unten sitzt */
+        /* Flexbox sorgt dafür, dass der Inhalt unten klebt */
         display: flex;
-        align-items: flex-end;
-        height: 100%; 
+        flex-direction: column;
+        justify-content: flex-end;
+        height: 100%; /* Der Container ist vollflächig */
         
         transform: translateY(100%);
         transition: transform 0.3s ease-out;
     }
 
-    #searchModal.show .modal-dialog {
-        transform: translateY(0);
-    }
-
     #searchModal .modal-content {
-        /* Hier stellen wir die 75% Höhe ein */
-        height: 85vh; 
+        /* WICHTIG: Höhe passt sich dem Inhalt an */
+        height: auto; 
+        max-height: 92vh; /* Verhindert, dass es oben aus dem Bild rutscht */
         
         border-radius: 20px 20px 0 0;
         border: none;
-        overflow-y: auto; /* Erlaubt Scrollen innerhalb des Modals */
-        padding-bottom: env(safe-area-inset-bottom);
+        overflow-y: auto; /* Falls der Inhalt doch mal riesig ist (z.B. mini Handys) */
+        
+        /* Schutz für iPhone Home-Bar */
+        padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+    }
+
+    #searchModal.show .modal-dialog {
+        transform: translateY(0);
+    }
+}
+    /* Ergänze dies in deinem Media Query */
+    #searchModal .modal-dialog.dragging {
+        transition: none; /* Verhindert Ruckeln beim Ziehen */
+    }
+
+    /* Der Querbalken (Handle) braucht eine gute Trefferfläche */
+    .modal-handle {
+        width: 40px;
+        height: 5px;
+        background: #ccc;
+        border-radius: 10px;
+        margin: 10px auto;
+        cursor: grab;
     }
 }
 
