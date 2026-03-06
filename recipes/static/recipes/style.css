@@ -88,6 +88,21 @@ li a {
 /* -------------------------
    Cards
 ------------------------- */
+.login-card {
+    border-radius: 0.5rem;
+    overflow: hidden; 
+    background: #fff;
+    cursor: pointer;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+    min-height: 350px;
+    display: flex;
+    flex-direction: column;
+    position: relative; 
+    transition: all 0.25s ease-in-out; /* Zusammengefasst */
+}
+
+
+
 .card-img-top { 
     object-fit: cover; 
     height: 180px; 
