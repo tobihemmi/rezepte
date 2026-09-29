@@ -11,19 +11,15 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h3>Wochenplan</h3>
         <div class="d-flex gap-2">
-            {% if prev_week %}
             <a href="?start_date={{ prev_week|date:'Y-m-d' }}" class="btn btn-ios-sm-secondary me-auto">
                 <i class="bi bi-arrow-left"></i>
             </a>
-            {% endif %}
             <a href="?start_date={{ today|date:'Y-m-d' }}" class="btn btn-ios-sm me-auto">
                 <i class="bi bi-calendar-date"></i>
             </a>
-            {% if next_week %}
             <a href="?start_date={{ next_week|date:'Y-m-d' }}" class="btn btn-ios-sm-secondary me-auto">
                 <i class="bi bi-arrow-right"></i>
             </a>
-            {% endif %}
         </div>
     </div>
 
@@ -31,7 +27,7 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h5 class="mt-4 mb-2">Woche ab {{ week.week_start|date:"d.m.Y" }}</h5>
     </div>
-        
+
         <div class="row g-3">
             {% for day, entries in week.day_entries_list %}
             <div class="col-md-4 col-sm-6">
@@ -85,7 +81,7 @@
                                                     {% csrf_token %}
                                                     <input type="hidden" name="action" value="move">
                                                     <input type="hidden" name="entry_id" value="{{ entry.id }}">
-                                                    <input type="hidden" name="start_date" value="{{ week_start|date:'Y-m-d' }}">
+                                                    <input type="hidden" name="start_date" value="{{ start_date|date:'Y-m-d' }}">
 
                                                     <input type="date"
                                                         name="date"
@@ -98,18 +94,26 @@
                                                     </button>
                                                 </form>
 
-
-                                                <a href="?action=remove&entry_id={{ entry.id }}"
-                                                   class="btn btn-sm btn-ios-sm-danger"
-                                                   title="Entfernen">
-                                                    Löschen
-                                                </a>
+                                                <!-- Löschen -->
+                                                <form method="post" style="margin:0;">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="action" value="remove">
+                                                    <input type="hidden" name="entry_id" value="{{ entry.id }}">
+                                                    <input type="hidden" name="start_date" value="{{ start_date|date:'Y-m-d' }}">
+                                                    <button type="submit"
+                                                            class="btn btn-sm btn-ios-sm-danger"
+                                                            title="Entfernen">
+                                                        Löschen
+                                                    </button>
+                                                </form>
                                             </div>
 
                                             <!-- Kommentar -->
-                                            <form method="get" class="d-flex flex-column gap-2 mt-2">
+                                            <form method="post" class="d-flex flex-column gap-2 mt-2">
+                                                {% csrf_token %}
                                                 <input type="hidden" name="action" value="comment">
                                                 <input type="hidden" name="entry_id" value="{{ entry.id }}">
+                                                <input type="hidden" name="start_date" value="{{ start_date|date:'Y-m-d' }}">
                                                 <textarea name="comment"
                                                           class="form-control form-control-sm"
                                                           rows="3"
@@ -136,10 +140,12 @@
                         <div class="accordion-body">
                             <div class="card">
                                 <div class="card-body">
-                                    <form method="GET" action="{% url 'recipes:weekly_plan' %}" class="row g-2 align-items-center">
+                                    <form method="post" action="{% url 'recipes:weekly_plan' %}" class="row g-2 align-items-center">
+                                        {% csrf_token %}
                                         <input type="hidden" name="action" value="add">
                                         <input type="hidden" name="date" value="{{ day|date:'Y-m-d' }}">
-                                        
+                                        <input type="hidden" name="start_date" value="{{ start_date|date:'Y-m-d' }}">
+
                                         <div class="col-10">
                                             <select name="recipe_id" placeholder="Rezept suchen..." autocomplete="off" required>
                                                 <option value=""></option>
@@ -170,11 +176,10 @@ document.querySelectorAll('select[name="recipe_id"]').forEach((el) => {
     new TomSelect(el, {
         create: false,
         sortField: { field: "text", direction: "asc" },
-        placeholder: el.getAttribute('placeholder') || "Suchen...", 
+        placeholder: el.getAttribute('placeholder') || "Suchen...",
         allowEmptyOption: true,
         items: [],
     });
 });
-
 </script>
 {% endblock %}
