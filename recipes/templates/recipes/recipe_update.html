@@ -105,10 +105,12 @@
 <script>
 // Zutaten hinzufügen
 const ingredientsList = document.getElementById('ingredients-list');
+const dragHandleHTML = '<span class="input-group-text drag-handle" style="cursor: grab;"><i class="bi bi-grip-vertical"></i></span>';
 document.getElementById('add-ingredient').addEventListener('click', () => {
     const div = document.createElement('div');
     div.className = 'input-group mb-2 ingredient-item';
     div.innerHTML = `
+        ${dragHandleHTML}
         <input type="text" name="ingredients" class="form-control">
         <button type="button" class="btn btn-danger remove-btn">−</button>
     `;
@@ -122,6 +124,7 @@ document.getElementById('add-step').addEventListener('click', () => {
     const div = document.createElement('div');
     div.className = 'input-group mb-2 step-item';
     div.innerHTML = `
+        ${dragHandleHTML}
         <input type="text" name="steps" class="form-control">
         <button type="button" class="btn btn-danger remove-btn">−</button>
     `;
@@ -166,21 +169,5 @@ new Sortable(document.getElementById('steps-list'), {
     ghostClass: 'bg-light'
 });
 
-// WICHTIG: Passe deine "Hinzufügen"-Funktionen an!
-// Das neue HTML-Snippet in den JS-Funktionen muss jetzt auch das Handle enthalten:
-const dragHandleHTML = '<span class="input-group-text drag-handle" style="cursor: grab;"><i class="bi bi-grip-vertical"></i></span>';
-
-// Beispiel für add-ingredient:
-document.getElementById('add-ingredient').addEventListener('click', () => {
-    const div = document.createElement('div');
-    div.className = 'input-group mb-2 ingredient-item';
-    div.innerHTML = `
-        ${dragHandleHTML}
-        <input type="text" name="ingredients" class="form-control">
-        <button type="button" class="btn btn-danger remove-btn">−</button>
-    `;
-    ingredientsList.appendChild(div);
-    attachRemove(div.querySelector('.remove-btn'));
-});
 </script>
 {% endblock %}
