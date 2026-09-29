@@ -160,7 +160,7 @@ class IndexView(generic.ListView):
     model = Recipe
     template_name = "recipes/index.html"
     context_object_name = "latest_recipe_list"
-    paginate_by = 24  # Template braucht dafür Seitennavigation (page_obj)
+    paginate_by = 1000  # Template braucht dafür Seitennavigation (page_obj)
 
     SORT_FIELDS = {
         "title": "title",
